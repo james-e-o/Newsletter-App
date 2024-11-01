@@ -18,7 +18,7 @@
     /* --primary: 222 4% 0%; */
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 220, 13%, 91%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -123,6 +123,11 @@
   box-shadow: 0 0 0 1px rgba(0,0,0,.1);
   display: inline-block;
   cursor: pointer;
+}
+
+.transition-collapse {
+  transition: grid-template-rows 500ms ease-in-out;
+  
 }
 
 .popover {

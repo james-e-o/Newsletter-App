@@ -17,7 +17,7 @@ import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
-import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush } from 'lucide-react'
+import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush, ImageIcon } from 'lucide-react'
 import { GearIcon } from '@radix-ui/react-icons'
 
 
@@ -35,27 +35,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         )
     
         return (
-            <Tabs defaultValue="account" className="w-full flex flex-col overflow-y-hidden flex-grow">
-                 <AlertDialog>
-                  <AlertDialogContent className='rounded-md max-w-[80vw] p-2'>
-                    <p className="p-1 h-fit flex justify-end items-center">
-                      <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
-                    </p>
-                    
-                    <AlertDialogTitle>
-                      <h4 className="mb-2 text-sm font-medium leading-none">Tags</h4>
-                    </AlertDialogTitle>
-                      <>
-                      {
-                        activeDialog === 'styling'? <Styling/>: 
-                        activeDialog === 'drafts'? <Drafts/>: 
-                        activeDialog === 'saved'?<Saved/> : ""
-                      }
-                      </>
-                      {/* <AlertDialogAction>Continue</AlertDialogAction> */}
-                  </AlertDialogContent>
-  
-              
+            <Tabs defaultValue="account" className="w-full flex flex-col overflow-y-hidden flex-grow">             
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="account">Write ad</TabsTrigger>
                 <TabsTrigger value="password">AI generate</TabsTrigger>
@@ -116,45 +96,37 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                         
                       </Card>
     
-                      <Card className='mb-3 rounded-sm'>
-                        <CardContent className='px-3 py-2'>
+                      <Card className='mb-5 rounded-sm'>
+                        <CardContent className='px-3 py-3'>
                           <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-sm mb-[0.13rem]' ><span>Ad graphics</span></label>
                           <CardDescription className='text-xs py-1'>
                             Set up design for poster.
                           </CardDescription>
                        
-                          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="">
-                            <CollapsibleContent className="">
+                          <div className={!custom?"grid grid-rows-[1fr] transition-collapse":"grid grid-rows-[0fr] transition-collapse"}>
+                            <div className="p-1 overflow-hidden">
+
                                 <div className=' mt-2 ml-1 relative'>
-                                  <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>headline</span> </label>
-                                  {/* <div className="rounded-md text-sm border border-gray-200 overflow-clip">
-                                    <div className="flex justify-between p-2 items-center h-7">
-                                      <input className='h-full rounded-none te border-none outline-none' type='text' />
-                                      <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span>
-                                      /* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> *
-                                    </div>
-                                    <div className=" h-7 flex items-center justify-start p-2 bg-gray-200">
-                                      <AlertDialogTrigger onClick={()=>{setActiveDialog('styling')}} asChild>
-                                        <Brush className='w-5 rounded-lg bg-white h-5'/>
-                                      </AlertDialogTrigger>                                  
-                                     
-                                    </div>
-                                  </div> */}
-                                  <TextBox initAlert={()=>{setActiveDialog('styling')}}/>
+
+                                    <TextBox placeholder='...logo text' label={'logo'} logo={true} modify={false} initAlert={()=>{setActiveDialog('styling')}}/>
+
+                                    <TextBox placeholder='...headline text' label={'headline'} modify={true} initAlert={()=>{setActiveDialog('styling')}}/>
+                                 
+                                    <TextBox placeholder='...text 1' label={'subtext 1'} initAlert={()=>{setActiveDialog('styling')}}/>
+
+                                    <TextBox placeholder='...text 2' label={'subtext 2'} initAlert={()=>{setActiveDialog('styling')}}/>
+                                  
                                 </div>
-                                <div className="mt-4 ml-1">
-                                <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs' ><span>short note</span> <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span></label>
-                                    <textarea name="" id="" placeholder='type here...' className=' "flex rounded-md border border-slate-200 w-full bg-transparent p-3 mt-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-slate-950 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:file:text-slate-50 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"' rows="3"></textarea>
-                                </div>
+                              
                                 <div className="mt-2 ml-1">
                                     <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs' ><span>background</span></label>
                                     <div className="border mt-1 p-3 rounded">
                                       <p className="text-xs py-1">colors</p>
                                         <Accordion collapsible>
                                           <AccordionItem value="item-1">
-                                            <div className="flex justify-between"> 
+                                            <div className="flex justify-between items-center"> 
                                                 <span className='text-xs'>background color</span>
-                                                <AccordionTrigger>
+                                                <AccordionTrigger className='p-0'>
                                                   <div className={ `p-1 shadow-md justify-center items-center inline-flex cursor-pointer` } onClick={()=>setPickState(!pickState) }>
                                                     <p className={ `w-5 h-4 inline-block rounded-sm bg-[slateblue]` } />
                                                   </div>
@@ -168,20 +140,18 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                                       
                                     </div>
                                 </div>
-                            </CollapsibleContent>
-                            
-                            <div className="rounded-sm ml-1 mt-2 border p-3">
+
+                            </div>
+                            <div className="rounded-sm max-h-min ml-1 my-2 border p-3">
                               <div className='flex justify-between items-center'>
                                 <p className="inline-block text-xs">Customize your poster design</p>
-                                <CollapsibleTrigger asChild>
-                                    <div>
-                                        <Switch checked={custom} onCheckedChange={()=>setCustom(!custom)} />
-                                    </div>
-                                </CollapsibleTrigger>
+                                <div>
+                                    <Switch checked={custom} onCheckedChange={()=>setCustom(!custom)} />
+                                </div>
                               </div>
-                              <Button disabled={custom==false} size='sm' onClick={designTrigger} className=' mt-1 py-1 px-2 font-semibold text-xs border-border' variant={!isOpen?'':'icon'}><Image  src={!isOpen?customImgWhite:customImg} alt="An example image" width={20} height={20} className='mr-1'/> Customize</Button>
+                              <Button disabled={custom==false} size='sm' onClick={designTrigger} className=' mt-1 py-1 px-2 font-semibold text-xs border-border' variant={custom?'':'icon'}><Image  src={custom?customImgWhite:customImg} alt="An example image" width={20} height={20} className='mr-1'/> Customize</Button>
                             </div>
-                          </Collapsible>
+                          </div>
                         </CardContent>
                       </Card>
                   </form> 
@@ -229,7 +199,6 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                   </Card>
                 </TabsContent>
               </div>
-              </AlertDialog>
             </Tabs>
   )
 }
@@ -238,29 +207,47 @@ export default NewAd
 
 
 
-const TextBox = ({initAlert}) => {
+const TextBox = ({initAlert, logo, modify, label, placeholder}) => {
   // const [activeDialog, setActiveDialog]= useState('')
   return (
-      <div className="rounded-md text-sm border border-gray-200 overflow-clip">
-        <div className="flex justify-between p-2 items-center h-7">
-          <input className='h-full rounded-none te border-none outline-none' type='text' />
-          <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span>
+      <div className="rounded-md text-sm border mb-2 border-gray-200 overflow-clip">
+        <AlertDialog>
+          <AlertDialogContent className='rounded-md max-w-[80vw] p-2'>
+            <p className="p-1 h-fit flex justify-end items-center">
+              <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
+            </p>
+            
+            <AlertDialogTitle>
+              <h4 className="mb-2 text-sm font-medium leading-none">Tags</h4>
+            </AlertDialogTitle>
+            <Styling />
+          </AlertDialogContent>
+        {label && <><label htmlFor="" className='relative ml-[2px] p-1 items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>{label}</span> </label>
+        <Separator/></> }
+        {logo && <div className='flex justify-start items-center gap-2'>
+          <Button size='sm' className='p-1 h-fit m-1 inline-flex rounded-sm items-center' variant='secondary'><ImageIcon className='w-4 h-2 '/>insert logo</Button>
+          <input type="file" name="image" hidden id="" />  
+        </div>}
+        <div className="flex justify-between px-2 py-1 items-center h-7">
+          <input className='h-full rounded-none te border-none outline-none placeholder:italic' placeholder={placeholder} type='text' />
+          {modify && <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span>}
           {/* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> */}
         </div>
         <div className=" h-7 flex items-center justify-start p-2 bg-gray-200">
-          <AlertDialogTrigger onClick={initAlert} asChild>
+          <AlertDialogTrigger asChild>
             <Brush className='w-5 rounded-lg bg-white h-5'/>
           </AlertDialogTrigger>                                  
         
         </div>
+        </AlertDialog>
       </div>
   )
 }
 
 const Styling = () => {
-  const tags = Array.from({ length: 10 }).map(
-    (_, i, a) => `v1.2.0-beta.${a.length - i}`
-  )
+  // const tags = Array.from({ length: 10 }).map(
+  //   (_, i, a) => `v1.2.0-beta.${a.length - i}`
+  // )
 
   const [pickState, setPickState] = useState(false)
   const [color, setColor] = useState('orange')
