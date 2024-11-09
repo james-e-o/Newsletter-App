@@ -9,6 +9,8 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
+			fault:'#E5E7EB',
+			alt:'#A1A1A1',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -51,7 +53,10 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			Inter: ['Inter','mono']
+  			Inter: ['Inter','mono'],
+			Clash: ['ClashDisplay', 'serif'],
+			Voces: ['Voces', 'sans'],
+			Madetommy: ['Madetommy', 'sans'],
   		},
   		transition: {
   			slider: 'left 2000ms ease-in-out'

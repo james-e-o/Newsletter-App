@@ -6,6 +6,18 @@
   font-family: "Inter";
   src: url("../lib/Inter/Inter-Regular.ttf");
 }
+@font-face {
+  font-family: Voces;
+  src: url("../lib/Voces/Voces-Regular.ttf");
+}
+@font-face {
+  font-family: Madetommy;
+  src: url("../lib/made_tommy/MADE_TOMMY_Regular.otf");
+}
+@font-face {
+  font-family: ClashDisplay;
+  src: url("../lib/ClashDisplay_Complete/ClashDisplay-Regular.otf");
+}
 
 @layer base {
   :root {
@@ -126,7 +138,7 @@
 }
 
 .transition-collapse {
-  transition: grid-template-rows 500ms ease-in-out;
+  transition: grid-template-rows 400ms ease-in-out;
   
 }
 
