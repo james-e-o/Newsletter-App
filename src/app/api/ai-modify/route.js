@@ -5,10 +5,6 @@ const openai = new OpenAI({
   baseURL: "https://api.x.ai/v1",
 });
 
-
-
-console.log(completion.choices[0].message);
-
 export async function POST(request) {
     const text = request.body.text
     try {
