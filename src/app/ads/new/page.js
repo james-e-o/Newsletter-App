@@ -43,7 +43,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         }
 
         async function modifyHeading(prompt){
-          const response = await fetch("/ai-modify", {
+          const response = await fetch("/api/ai-modify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -51,7 +51,8 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
             body: JSON.stringify({ text: prompt }),
           });
           const data = await response.json()
-          setResponse(data)
+          console.log(data)
+          setResponse(data.content)
         }
 
         function modifyDescription(e){
@@ -76,11 +77,12 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                     </CardHeader>
                   </Card>
                     
-                  <form action="" name='new-pub' className=''>             
+                  <form action="" onSubmit={(e)=>e.preventDefault()} name='new-pub' className=''>             
                     
                       <Card className='mb-3 rounded-sm'>
                         <AlertDialog>
                           <AlertDialogContent className='rounded-md max-w-[80vw] p-2'>
+                            <AlertDialogTitle className='h-0'></AlertDialogTitle>
                             <p className="p-1 h-fit flex justify-end items-center">
                               <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
                             </p>
@@ -204,7 +206,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                                                   <p className="p-1 h-fit flex justify-end items-center">
                                                     <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
                                                   </p>
-                                                  <AlertDialogTitle>
+                                                  <AlertDialogTitle className='h-0'>
                                                     <h4 className="text-sm font-semibold leading-none">choose background style</h4>
                                                   </AlertDialogTitle>
                                                   </AlertDialogContent>
@@ -288,6 +290,7 @@ const TextBox = ({initAlert, logo, modify, label, placeholder}) => {
       <div className="rounded-md text-sm border mb-3 border-gray-200 overflow-clip">
         <AlertDialog>
           <AlertDialogContent className='rounded-md max-w-[80vw] p-2'>
+          <AlertDialogTitle className='h-0'></AlertDialogTitle>
             <p className="p-1 h-fit flex justify-end items-center">
               <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
             </p>
@@ -415,7 +418,7 @@ const AiBox = ({result,content}) => {
         {content}
         ?
       </p>
-      <div className="rounded overflow-y-scroll overflow-x-hidden h-48">
+      <div className="rounded px-2 overflow-y-scroll overflow-x-hidden h-fit max-h-32">
         {result}
       </div>
     </div>
