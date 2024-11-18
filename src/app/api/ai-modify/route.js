@@ -25,7 +25,7 @@ export async function POST(request) {
           return new Response(JSON.stringify(modifiedText))
     }catch(error){
         console.error("Error:", error);
-        res.status(500).json({ error: "Error generating modified text" });
+        return new Response("Error:", error)
     }
     ;
 }
