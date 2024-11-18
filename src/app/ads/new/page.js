@@ -28,17 +28,18 @@ import format4 from '../../../../public/format 4.png'
 import format5 from '../../../../public/format 5.png'
 import format6 from '../../../../public/format 6.png'
 
+const designs =[
+  {src:format1,type:'hello world'}, {src:format2,type:'hello world'}, {src:format3,type:'hello world'}, {src:format4,type:'hello world'}, {src:format5,type:'hello world'}, {src:format6,type:'hello world'},]
 
 const NewAd = ({designTrigger, categoryTrigger}) => {
 
-  const designs =[
-    {src:format1,type:'hello world'}, {src:format2,type:'hello world'}, {src:format3,type:'hello world'}, {src:format4,type:'hello world'}, {src:format5,type:'hello world'}, {src:format6,type:'hello world'},]
         
         const [colorGradient, setColorGradient] = useState(false) 
         const [activeDialog, setActiveDialog]= useState('')
         const [pickState, setPickState] = useState(false)
         const [custom, setCustom] = useState(false) // Quick poster design
         const [response, setResponse] = useState('') // AI modify response
+     
 
         // AD DATA
         const [heading, setHeading] = useState('')
@@ -50,7 +51,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         const [bannerText, setBannerText] = useState('')
         const [badgeText, setBadgeText] = useState('')
         const [bgImage, setBgImage] = useState()
-        const [posterStyle, setPosterStyle] = useState('')
+        const [posterStyle, setPosterStyle] = useState(designs[0])
         
         // const [state, dispatch] = useReducer((state,action)=>{
         //   switch (action.type) {
@@ -90,12 +91,13 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           (_, i, a) => `v1.2.0-beta.${a.length - i}`
         )
         
-        useEffect(()=>{
-          setPosterStyle(designs[0])
-        },[])
+        // useEffect(()=>{
+        //   fetch('/api/get-designs')
+        //   setPosterStyle(designs[0])
+        // },[posterStyle])
 
         return (
-            <Tabs defaultValue="account" className="w-full h-full flex flex-col overflow-y-clip flex-grow">   
+            <Tabs defaultValue="account" className="w-full h-full flex flex-col overflow-y-clip">   
               <AlertDialog>          
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="account">Write ad</TabsTrigger>
@@ -196,7 +198,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                                 <ScrollArea className='whitespace-nowrap overflow-x-scroll'>
                                   <div className="flex mb-1 w-max gap-2">
                                     {designs.map((design,index) =>(
-                                      <div key={index} className='w-fit' onClick={()=>setPosterStyle(designs[index])}>
+                                      <div key={index} className='w-fit' onClick={()=>{setPosterStyle(designs[index]),console.log(index,designs[index])}}>
                                         <Card className={posterStyle.src==design.src?'mx-1 overflow-clip  w-36 h-24 border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-36 h-24'} >
                                           <Image alt={`format${index}`} src={design.src} className='scale-[1.07] relative  h-full w-full'/>
                                         </Card>
@@ -208,20 +210,11 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
                                 </ScrollArea>
 
                                 <div>
-                                  hello tester
-                                  {/* {
-                                    posterStyle==(designs[0] || designs[4])?
-                                    <div>
-                                      greetings earth
-                                    </div>
-                                    :
-                                    ''
-                                  } */}
                                   {
-                                    posterStyle==(designs[0] || designs[4])?
+                                    posterStyle==(designs[0]) || posterStyle==(designs[3])?
                                     <PosterDesignForm logo={true}/>
                                     :
-                                    posterStyle==(designs[2] || designs[3] || designs[5]) ?
+                                    posterStyle==(designs[1]) || posterStyle==(designs[2]) || posterStyle==(designs[4]) ?
                                     <PosterDesignForm subtext={true}/>
                                     :
                                     <PosterDesignForm banner={true}/>
