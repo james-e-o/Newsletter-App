@@ -153,4 +153,10 @@
   bottom: 0px;
   left: 0px;
 }
-
+div.rcp-body{
+  padding: 6px;
+  gap: 10px;
+}
+label.rcp-field-label{
+  display: none;
+}

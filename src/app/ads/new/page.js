@@ -1,6 +1,7 @@
 'use client'
 import { useState,useEffect,useReducer,useContext } from 'react'
-import { SketchPicker, SliderPicker, ChromePicker } from 'react-color'
+import { ColorPicker, useColor,Saturation, Hue, Alpha } from "react-color-palette";
+import "react-color-palette/css";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,7 +17,7 @@ import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
-import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon } from 'lucide-react'
+import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon, Minus } from 'lucide-react'
 import { GearIcon } from '@radix-ui/react-icons'
 import { designData } from './layout'
 
@@ -30,7 +31,9 @@ import format6 from '../../../../public/format 6.png'
 
 const designs =[
   {src:format1,type:'hello world'}, {src:format2,type:'hello world'}, {src:format3,type:'hello world'}, {src:format4,type:'hello world'}, {src:format5,type:'hello world'}, {src:format6,type:'hello world'},]
-
+const fontFamilies = [
+  'Inter', 'Madetommy','Voces', 'Clash'
+]
 const NewAd = ({designTrigger, categoryTrigger}) => {
 
         
@@ -396,15 +399,15 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
       </div>
       <div className=' mt-2 ml-1 relative'>
 
-         {logo? <TextBox changeText={()=>{setLogoText}} changeLogo={(e)=>setLogoImage(e.target.files[0])} placeholder='...logo text' label={'logo'} logo={true} modify={false}/>:''}
+         {logo? <TextBox changeText={(e)=>{setLogoText(e.target.value)}} changeLogo={(e)=>setLogoImage(e.target.files[0])} placeholder='...logo text' label={'logo'} logo={true} modify={false}/>:''}
 
-          {headline?<TextBox changeText={()=>{setHeadlineText}} placeholder='...headline text' label={'headline'} modify={true}/>:''}
+          {headline?<TextBox changeText={(e)=>{setHeadlineText(e.target.value)}} placeholder='...headline text' label={'headline'} modify={true}/>:''}
         
-          {subtext?<TextBox changeText={()=>{setSubText}} placeholder='...mini text' label={'mini text'} modify={true}/>:''}
+          {subtext?<TextBox changeText={(e)=>{setSubText(e.target.value)}} placeholder='...mini text' label={'mini text'} modify={true}/>:''}
 
-          {badge?<TextBox changeText={()=>{setBadgeText}} placeholder='...badge' label={'badge'}/>:''}
+          {badge?<TextBox changeText={(e)=>{setBadgeText(e.target.value)}} placeholder='...badge' label={'badge'}/>:''}
 
-          {banner?<TextBox changeText={()=>{setBannerText}} placeholder='...banner' label={'banner'}/>:''}
+          {banner?<TextBox changeText={(e)=>{setBannerText(e.target.value)}} placeholder='...banner' label={'banner'}/>:''}
         
       </div>
     </div>
@@ -477,28 +480,29 @@ const Gradients = () => {
   )
 }
 
-const Styling = () => {
-  // const tags = Array.from({ length: 10 }).map(
-  //   (_, i, a) => `v1.2.0-beta.${a.length - i}`
-  // )
+const Styling = ({h4}) => {
 
-  const [pickState, setPickState] = useState(false)
-  const [color, setColor] = useState('orange')
   const [gradient, setGradient] = useState(false)
+  const [thirdGradient, setThirdGradient] = useState(false)
   const [accordion1, setAccordion1] = useState(false)
-  const [accordion2, setAccordion2] = useState(false)
+  const [color, setColor] = useColor("salmon");
+  const [color2, setColor2] = useColor("slateblue");
+  const [color3, setColor3] = useColor("orange");
+
+  useEffect(()=>{
+
+  },color)
   return (
-    // <ScrollArea className="h-72 w-full rounded-md">
       <div className="p-1">
         
-        <h4 className="mb-2 text-sm font-medium leading-none">Text color</h4>
+        <h4 className="mb-2 text-sm font-medium leading-none">{h4}</h4>
         <div className=' flex px-3 py-1 justify-between items-center' onClick={()=>{gradient && setGradient(false),setAccordion1(!accordion1) }}>
           <span className="text-sm font-medium mr-4">color</span>
-          <Button disabled={gradient==true} className={ `w-6 h-3 shadow-sm cursor-pointer inline-block rounded-sm bg-[slateblue]` } />
+          <button disabled={gradient==true} style={{backgroundColor:color.hex}} className={ `w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]` } />
         </div>
         <div className={accordion1?"grid grid-rows-[1fr] px-3 transition-collapse":"grid grid-rows-[0fr] px-3 transition-collapse"}>
           <div className='overflow-hidden'>
-            <ChromePicker  color={color } onChange={(color)=>setColor({color:color.hex}) } />
+          <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} />
           </div>
         </div>
         <div className=' flex px-3 justify-between items-center'>
@@ -510,15 +514,22 @@ const Styling = () => {
         <div className={gradient?"grid grid-rows-[1fr] px-3 transition-collapse":"grid grid-rows-[0fr] px-3 transition-collapse"}>
           <div className='overflow-hidden'>
            <Tabs defaultValue="grad 1" className='w-full'>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="grad 2"><div className={ `color bg-[orange] inline-block`} /></TabsTrigger>
-                <TabsTrigger value="grad 1"><div className={ `color bg-[orange] inline-block`} /></TabsTrigger>
-              </TabsList>
+              <div className="w-full flex gap-2">
+                <TabsList className={`inline-grid w-fit gap-2 bg-gray-200 rounded-[3px]  p-[2px] h-fit ${thirdGradient?'grid-cols-3':'grid-cols-2'}`}>
+                  <TabsTrigger className='p-1 rounded-sm' value="grad 1"><div style={{backgroundColor:color.hex}} className={ `color p-1 inline-block`} /></TabsTrigger>
+                  <TabsTrigger className='p-1 rounded-sm' value="grad 2"><div style={{backgroundColor:color2.hex}} className={ `color p-1 inline-block`} /></TabsTrigger>
+                  {thirdGradient?<TabsTrigger className='p-1 rounded-sm' value="grad 3"><div style={{backgroundColor:color3.hex}} className={ `color p-1 inline-block`} /></TabsTrigger>:''}
+                </TabsList>
+                <Button onClick={()=>setThirdGradient(!thirdGradient)} variant="outline" className='p-0 w-6 h-6' size="icon">{!thirdGradient?<Plus className='h-full w-full' />:<Minus className='h-full w-full'/>}</Button>
+              </div> 
               <TabsContent value="grad 1" className='mt-1 p-1'>
-                <ChromePicker/>  
+                <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} />
               </TabsContent>
               <TabsContent value="grad 2" className='mt-1 p-1'>
-                <ChromePicker/>                
+                <ColorPicker color={color2} hideInput={["rgb", "hsv"]} height={100} onChange={setColor2} />
+              </TabsContent>
+              <TabsContent value="grad 3" className='mt-1 p-1'>
+                <ColorPicker color={color3} hideInput={["rgb", "hsv"]} height={100} onChange={setColor3} />
               </TabsContent>
            </Tabs>
           </div>
@@ -528,18 +539,34 @@ const Styling = () => {
   )
 }
 
-const Font = () => {
+const Font = ({data}) => {
+  const [font, setFont] = useState(fontFamilies[0])
   return (
-    <div>
-      <h4 className="mb-2 text-sm font-medium leading-none">Font</h4>
-      <div className=" px-3 py-1 justify-between items-center">
-        <p className="">family</p>
-        <ScrollArea ></ScrollArea>
+    <div className='overflow-x-scroll'>
+      <h4 className="mb-1 mx-1 text-xs font-semibold leading-none">Font</h4>
+      <ScrollArea className=' overflow-x-scroll'>
+        <div className="flex mb-1 w-max gap-2 ">
+          {fontFamilies.map((fam,index) =>(
+            <div key={index} className='w-fit' onClick={()=>{setFont(fontFamilies[index])}}>
+              <Card className={font==fam?'mx-1 overflow-clip  w-fit h-fit border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-fit h-fit'} >
+                <p style={{fontFamily:fam}} className={`font-semibold text-base px-6 py-1`}>Aa</p>
+              </Card>
+              <p className="text-center text-xs my-1">{fam}</p>
+            </div>
+          ))}
+        </div>
+        <ScrollBar orientation='horizontal' className='hidden'/>
+      </ScrollArea>
+      <div className="flex">
+        <div className=" px-3 py-1 justify-between items-center">
+          <p className="">family</p>
+        </div>
+        <div className=" px-3 py-1 justify-between items-center">
+          <p className="">family</p>
+          <div className="sc"></div>
+        </div>
       </div>
-      <div className=" px-3 py-1 justify-between items-center">
-        <p className="">family</p>
-        <div className="sc"></div>
-      </div>
+      
     </div>
   )
 }
@@ -565,6 +592,14 @@ const AiBox = ({result,content,useModification}) => {
 }
 
 
+const PickColor = ({hideInput,color,onChange,height}) => {
+ 
+  return (
+    <div className=''>
+      <ColorPicker hideInput={hideInput} color={color} height={height}  onChange={onChange} />
+    </div>
+  )
+}
 const Drafts = () => {
   return (
     <div>
