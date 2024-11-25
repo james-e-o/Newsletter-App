@@ -337,9 +337,16 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
    
   // }
 
-  useEffect(()=>{
-    
-  },[])
+  // useEffect(()=>{
+  //   if(posterStyle==(designs[0]) || posterStyle==(designs[3])){
+  //     setLogoCount([...logoCount,`logo${logoCount.length+1}`])
+  //   } else if ( posterStyle==(designs[1]) || posterStyle==(designs[2]) || posterStyle==(designs[4])){
+
+  //   } else {
+
+  //   }
+                                  
+  // },[])
 
   return (
     <div>
@@ -395,9 +402,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
       </div>
       <div className=' mt-2 ml-1 relative'>
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">Logo</p>
-          <div>
+          <div className='flex gap-2 items-center'>
 
             {logoCount.length<1?<Button onClick={()=>{logoCount.length<1?setLogoCount([...logoCount,`logo${logoCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {logoCount.length>=1?<Button onClick={()=>{logoCount.length>=1?setLogoCount(logoCount.filter(logo=>logo==`logo${logoCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
@@ -408,9 +415,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
             ))}          
         </div>
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">headline</p>
-            <div>
+            <div className='flex gap-2 items-center'>
             {headLineCount.length<2?<Button onClick={()=>{headLineCount.length<2?setHeadLineCount([...headLineCount,`headline${headLineCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {headLineCount.length>=1?<Button onClick={()=>{headLineCount.length>=1?setHeadLineCount(headLineCount.filter(headline=>headline==`headline${headLineCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
             </div>
@@ -420,9 +427,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
             ))}          
         </div>
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">subtext</p>
-            <div>
+            <div className='flex gap-2 items-center'>
             {subTextCount.length<2?<Button onClick={()=>{subTextCount.length<2?setSubTextCount([...subTextCount,`subtext${subTextCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {subTextCount.length>=1?<Button onClick={()=>{subTextCount.length>=1?setSubTextCount(subTextCount.filter(subtext=>subtext==`subtext${subTextCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
             </div>
@@ -432,9 +439,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
             ))}          
         </div>
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">badge</p>
-          <div>
+          <div className='flex gap-2 items-center'>
 
             {badgeCount.length<2?<Button onClick={()=>{badgeCount.length<2?setBadgeCount([...badgeCount,`badge${badgeCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {badgeCount.length>=1?<Button onClick={()=>{badgeCount.length>=1?setBadgeCount(badgeCount.filter(badge=>badge==`badge${badgeCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
@@ -445,9 +452,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
             ))}          
         </div>
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">banner</p>
-            <div>
+            <div className='flex gap-2 items-center'>
             {bannerCount.length<2?<Button onClick={()=>{bannerCount.length<2?setBannerCount([...bannerCount,`banner${bannerCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {bannerCount.length>=1?<Button onClick={()=>{bannerCount.length>=1?setBannerCount(bannerCount.filter(banner=>banner==`banner${bannerCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
             </div>
@@ -457,9 +464,9 @@ const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,ban
             ))}          
         </div>        
         <div className="mt-1">
-          <div className="p-1 flex items-center justify-between gap-3">
+          <div className="p-1 flex items-center mb-1 justify-between gap-3">
             <p className="p-1 text-xs font-semibold">add image</p>
-            <div>
+            <div className='flex gap-2 items-center'>
             {imageCount.length<2?<Button onClick={(e)=>{imageCount.length<2?openImageDialog(e):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
             {imageCount.length>=1?<Button onClick={()=>{imageCount.length>=1?(setImageCount(imageCount.filter(image=>image==`image${imageCount.length-1}`)),setImage(image.filter((img,i)=>i==image.length-1))):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
             </div>
