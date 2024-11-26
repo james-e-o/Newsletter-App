@@ -307,7 +307,12 @@ return (
                                 </div>
                               </div>
                                 {headLineCount && headLineCount.map((headline,index)=>(
-                                  <TextBox key={index} changeText={(e)=>{}} type='headline' placeholder='...headline text' modify={true}/>   
+                                  <TextBox 
+                                    key={index} 
+                                    changeText={(e)=>{setHeadlineText( prev=>{ let newArray = [...prev]; newArray[index] = e.target.value ;return newArray
+                                    }),console.log(headlineText)}} 
+                                    type='headline' placeholder='...headline text' 
+                                    modify={true}/>   
                                 ))}          
                             </div>
                             <div className="mt-1">
