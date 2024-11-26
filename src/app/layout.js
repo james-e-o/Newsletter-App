@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
      
-      <body className={`w-screen overflow-hidden h-screen`}>
+      <body className={`w-screen overflow-hidden h-[100svh]`}>
       {/* <Header/> */}
         {children}
       </body>
