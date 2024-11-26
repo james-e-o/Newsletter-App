@@ -5,6 +5,8 @@ import "react-color-palette/css";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import Link from "next/link"
 import Image from 'next/image'
 import customImgWhite from '../../../../public/custom96w.png'
@@ -17,7 +19,7 @@ import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
-import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon, Minus } from 'lucide-react'
+import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush,Bold, Italic, Underline, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon, Minus } from 'lucide-react'
 import { GearIcon } from '@radix-ui/react-icons'
 import { designData } from './layout'
 
@@ -488,7 +490,10 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
   const [activeDialog, setActiveDialog]= useState('')
 
   //FONT
-  // const [font, setFont] = useState(fontFamilies[0])
+  const [bold, setBold] = useState(false)
+  const [italics, setItalics] = useState(false)
+  const [underline, setUnderline] = useState(false)
+  const [fontSize, setFontSize] = useState(false)
   //COLORING
   const [gradient, setGradient] = useState(false)
   const [thirdGradient, setThirdGradient] = useState(false)
@@ -574,7 +579,7 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                 
                 <div className='overflow-x-scroll'>
                   <h4 className="mb-1 mx-2 text-[0.7rem] font-semibold leading-none">text input</h4>
-                  <div style={{fontFamily:localData.fontFamily}} className={`p-1 text-center border mb-1 text-[0.8125rem]`}>"{localData.value}"</div>
+                  <div style={{fontFamily:localData.fontFamily}} className={`p-1 text-center border mb-1 text-sm`}>"{localData.value}"</div>
                   <h4 className="mb-1 mx-2 text-[0.7rem] font-semibold leading-none">font family</h4>
                   <ScrollArea className=' overflow-x-scroll'>
                     <div className="flex mb-1 w-max gap-2 ">
@@ -590,6 +595,26 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                     <ScrollBar orientation='horizontal' className='hidden'/>
                   </ScrollArea>
                   <Separator/>
+                  <div className="mt-1">
+                    <h4 className="mb-1 mx-2 text-[0.7rem] font-semibold leading-none">text size</h4>
+                    <div className="flex px-2 justify-between items-center">
+                      <Slider onChange={({target})=>{setFontSize(target.value),console.log(bold)}} defaultValue={[14]} min={6} max={24} step={2} className={'w-40'} />
+                      <p className="text-sm border py-[3px] px-2">val</p>
+                    </div>
+                  </div>
+                  <div className="mt-[5px]">
+                    <ToggleGroup className='flex justify-start' size='sm' variant="outline" type="multiple">
+                        <ToggleGroupItem onClick={()=>{setBold(!bold),console.log(bold)}} value="bold" aria-label="Toggle bold">
+                          <Bold className="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem onClick={()=>{setItalics(!italics)}} value="italic" aria-label="Toggle italic">
+                          <Italic className="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem onClick={()=>{setUnderline(!underline)}} value="underline" aria-label="Toggle underline">
+                          <Underline className="h-4 w-4" />
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                  </div>
                   <div className="flex">
                     <Tabs className='grid-cols-2'>
                       <TabsList>
