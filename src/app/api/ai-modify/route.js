@@ -15,7 +15,7 @@ export async function POST(request) {
             messages: [
               {
                 role: "user",
-                content: `paraphrase ${data.text}`,
+                content: `paraphrase ${data.text}, and please exclude explanatory phrases in your response`,
               },
             ],
           })

@@ -160,3 +160,7 @@ div.rcp-body{
 label.rcp-field-label{
   display: none;
 }
+.decoration-none{
+  text-decoration: none;
+  list-style: none;
+}

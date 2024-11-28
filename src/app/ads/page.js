@@ -14,7 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
-import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search } from 'lucide-react'
+import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Home, FileBox, Brush } from 'lucide-react'
 
 
 const Ads = () => {
@@ -22,23 +22,19 @@ const Ads = () => {
 
    
   return (
-    <div className="overflow-clip mb-1 relative border-none flex-grow flex w-full h-full flex-col font-Inter gap-3 px-2 pb-1">
+    <div className="overflow-x-clip flex w-full h-full flex-col font-Inter gap-2 pb-1">
+      <header className="p-5 justify-start flex">
+        <h1 className="font-Madetommy font-bold text-xl">adFeed</h1>    
+      </header>
         
-        
-        <Tabs defaultValue="yourads" className="flex font-Inter flex-col flex-grow w-full">
-            <TabsList className="flex justify-between px-[1px] w-full bg-transparent gap-1 grid-cols-3">
-                <TabsTrigger value='yourads' size='sm' className="px-1 border-b-[3px] rounded-none border-transparent data-[state=active]:border-gray-400 text-[0.82rem] data-[state=active]:bg-none data-[state=active]:border-b-[3px] data-[state=active]:shadow-none" onClick={()=>setActiveMenu('yourads')}>Your ads</TabsTrigger>
-                <TabsTrigger value='drafts' size='sm' className="px-1 border-b-[3px] rounded-none border-transparent data-[state=active]:border-gray-400 text-[0.82rem] data-[state=active]:bg-none data-[state=active]:border-b-[3px] data-[state=active]:shadow-none" onClick={()=>setActiveMenu('drafts')}>Drafts</TabsTrigger>
-                <TabsTrigger value='saved' size='sm' className="px-1 border-b-[3px] rounded-none border-transparent data-[state=active]:border-gray-400 text-[0.82rem] data-[state=active]:bg-none data-[state=active]:border-b-[3px] data-[state=active]:shadow-none" onClick={()=>setActiveMenu('saved')}>Saved</TabsTrigger>
-            </TabsList>
-            <div className="relative">
-            {
-              activeMenu === 'yourads'? <YourAds/>: 
-              activeMenu === 'drafts'? <Drafts/>: 
-              activeMenu === 'saved'?<Saved/> : ""
-            }
-            </div>
-        </Tabs>
+      <footer className="bottom-0 py-2 absolute w-full border-t border-gray-200">
+        <div className="p-1 flex justify-evenly gap-5 items-center">
+          <Link href={'#'} className='p-1 decoration-none'><Home className='text-black w-5 h-5'/></Link>
+          <Link href={'#'} className='p-1 decoration-none'><Search className='text-black w-5 h-5'/></Link>
+          <Link href={'#'} className='p-1 decoration-none'><Brush className='text-black w-5 h-5'/></Link>
+          <Link href={'#'} className='p-1 decoration-none'><FileBox className='text-black w-5 h-5'/></Link>
+        </div>
+      </footer>
     </div>
   )
 }
@@ -46,83 +42,6 @@ const Ads = () => {
 export default Ads
 
 
-
-  const Topics = () => {
-    useEffect(()=>{
-      const input = document.querySelector("input[placeholder='search topics...']")
-      input.focus()
-    })
-    return (
-      <div className='p-1 flex h-full flex-col'>
-        <div className="flex items-center justify-between mb-1">
-          <input className='w-[90%] p-3 border-none hover:outline-none hover:border-none outline-none focus:outline-none focus:border-none shadow-none'  placeholder='search topics...' type='text' />
-          <Search className='w-5 mr-2 h-5'/>
-        </div>
-        <Separator />
-        <div className="mt-1 flex-grow bg-blue-500">
-bulava
-        </div>
-      </div>
-    )
-  }
-  const MakeDesign = () => {
-    return (
-      <div className='p-1'>
-        <h4>Customize design</h4>
-        <div className="flex ">
-          <Input className='w-4/5' type='text' />
-          <Search className='w-2 h-2'/>
-        </div>
-        <Separator />
-        <div className="mt-1"></div>
-      </div>
-    )
-  }
-
-
-
-
-
-const YourAds = () => {
-    return (
-      <div>
-        hi world
-      </div>
-    )
-  }
-  
-  const Drafts = () => {
-    return (
-      <div>
-        hello world
-      </div>
-    )
-  }
-  
-  const Saved = () => {
-    return (
-      <div>
-         <form action="" name='new-pub' className=''>
-                    <div className=' mt-8 relative'>
-                        <label htmlFor="" className='relative ml-[2px] pb-1 items-center flex justify-between font-semibold text-[0.8rem] mb-[0.13rem]' ><span>Publication Name</span> <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai generate</span></label>
-                        <Input className='' />
-                        {/* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> */}
-                    </div>
-                    <div className=' mt-5 relative'>
-                        <label htmlFor="" className='relative ml-[2px] pb-1 items-center flex justify-between font-semibold text-[0.8rem] mb-[0.13rem]' ><span>Description</span> <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai generate</span></label>
-                        <textarea name="" id="" className=' "flex rounded-md border border-slate-200 w-full bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-slate-950 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:file:text-slate-50 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"' rows="5"></textarea>
-                        {/* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> */}
-                    </div>
-                    <div className=' mt-5 relative'>
-                        <label htmlFor="pub-logo" className='relative ml-[2px] pb-1 items-center flex justify-between font-semibold text-[0.8rem] mb-[0.13rem]' ><span>Publication Image</span> <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai generate</span></label>
-                        <Input className='' type='file' />
-                        {/* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> */}
-                    </div>
-                    
-                </form>
-      </div>
-    )
-  }
 
 
   // <div className={fillState?"absolute -translate-y-2 transition-[_z-index_160ms_ease-in-out_] z-10 bg-transparent opacity-100 inset-0 flex justify-center items-center rounded-md":"absolute inset-0 flex justify-center items-center transition-[_z-index_150ms_ease-in-out_] opacity-0 -z-10"}>

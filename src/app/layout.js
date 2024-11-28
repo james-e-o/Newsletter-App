@@ -3,7 +3,7 @@ import "./globals.css"
 import Header from "./header";
 
 export const metadata = {
-  title: "NewsletterApp",
+  title: "adFeed",
   description: "",
 };
 

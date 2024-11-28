@@ -1,6 +1,6 @@
 'use client'
 import { useState,useEffect,useReducer,useContext } from 'react'
-import { ColorPicker, useColor,Saturation, Hue, Alpha } from "react-color-palette";
+import { ColorPicker, useColor,Saturation,IColor, Hue, Alpha } from "react-color-palette";
 import "react-color-palette/css";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -53,12 +53,8 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         const [custom, setCustom] = useState(false) // Quick poster design
         const [response, setResponse] = useState('') // AI modify response
             // TextBox component types
-            const [logoCount, setLogoCount] = useState([])
             const [imageCount, setImageCount] = useState([])
-            const [bannerCount, setBannerCount] = useState([])
-            const [badgeCount, setBadgeCount] = useState([])
-            const [headLineCount, setHeadLineCount] = useState([])
-            const [subTextCount, setSubTextCount] = useState([])
+          
           
      
 
@@ -82,7 +78,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           input.click()
         }
 
-        async function modifyHeading(prompt){
+        async function AiModifyItem(prompt){
           const response = await fetch("/api/ai-modify", {
             method: "POST",
             headers: {
@@ -134,19 +130,16 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
 
 return (
   <Tabs defaultValue="account" className="w-full h-full flex flex-col overflow-y-clip">   
+    <header className="pt-4 px-3 mb-2 justify-start flex">
+      <h1 className="font-Madetommy font-bold text-xl">adFeed</h1>    
+    </header>
     <AlertDialog>          
     <TabsList className="grid w-full grid-cols-2">
-      <TabsTrigger value="account">Write ad</TabsTrigger>
-      <TabsTrigger value="password">AI generate</TabsTrigger>
+      <TabsTrigger className='font-Inter font-bold' value="account">New ad</TabsTrigger>
+      <TabsTrigger className='font-Inter font-bold' value="password">AI generate</TabsTrigger>
     </TabsList>
     <div className="h-full flex flex-col overflow-y-scroll my-2">
-      <TabsContent value="account" className='mt-0'>
-        <Card className='shadow-none border-none'>
-          <CardHeader className='px-2'>
-            <CardTitle>New Ad</CardTitle>
-          </CardHeader>
-        </Card>
-          
+      <TabsContent value="account" className='mt-0'>          
         <form action="" onSubmit={(e)=>e.preventDefault()} name='new-pub' className=''>             
           
             <Card className='mb-3 rounded-sm'>
@@ -157,8 +150,8 @@ return (
                     <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
                   </p>
                   {
-                      activeDialog === 'headline'? <AiBox result={response} useModification={()=>setHeading(response)} content={heading}/>: 
-                      activeDialog === 'description'?<AiBox result={response} useModification={()=>setDescription(response)} content={description}/> : ""
+                      activeDialog === 'headline'? <AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setHeading(response)} content={heading}/>: 
+                      activeDialog === 'description'?<AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setDescription(response)} content={description}/> : ""
                   }
                   
                 </AlertDialogContent>
@@ -170,7 +163,7 @@ return (
                 <div className=' mt-2 ml-1 relative'>
                       <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs mb-1' >
                         <span>Heading</span> 
-                        <AlertDialogTrigger disabled={heading===""} onClick={(e)=>{setActiveDialog('headline'),modifyHeading(heading)}}>
+                        <AlertDialogTrigger disabled={heading===""} onClick={(e)=>{setActiveDialog('headline'),AiModifyItem(heading)}}>
                           <span  style={heading===""?{opacity:'0.4'}:{opacity:'1'}} className=' rounded-xl border border-alt bg-accent px-2 py-[2px] leading-loose italic text-[10px]'>ai modify</span>
                         </AlertDialogTrigger>
                       </label>
@@ -180,7 +173,7 @@ return (
                       <div className="mt-2 ml-1">
                         <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs' >
                           <span>Description</span> 
-                          <AlertDialogTrigger disabled={description===""} onClick={(e)=>{setActiveDialog('description'),modifyDescription}}>
+                          <AlertDialogTrigger disabled={description===""} onClick={(e)=>{setActiveDialog('description'),AiModifyItem(description)}}>
                             <span  style={description===""?{opacity:'0.4'}:{opacity:'1'}} className=' rounded-xl border border-alt bg-accent px-2 py-[2px] leading-loose italic text-[10px]'>ai modify</span>
                           </AlertDialogTrigger>
                         </label>
@@ -289,29 +282,55 @@ return (
                               <div className="p-1 flex items-center mb-1 justify-between gap-3">
                                 <p className="p-1 text-xs font-semibold">Logo</p>
                               <div className='flex gap-2 items-center'>
-
-                                {logoCount.length<1?<Button onClick={()=>{logoCount.length<1?setLogoCount([...logoCount,`logo${logoCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {logoCount.length>=1?<Button onClick={()=>{logoCount.length>=1?setLogoCount(logoCount.filter(logo=>logo==`logo${logoCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
+                                {logoText.length<2?<Button onClick={()=>{logoText.length<2?setLogoText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
+                                {logoText.length>0?<Button onClick={()=>{logoText.length>0?setLogoText(logoText.filter(textObject=>textObject.index && textObject.index==logoText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                                 </div>
                               </div>
-                                {logoCount && logoCount.map((logo,index)=>(
-                                  <TextBox key={index} changeText={(e)=>{setLogoText(e.target.value)}} type='logo' changeLogo={(e)=>setLogoImage(e.target.files[0])} placeholder='...logo text' logo={true} modify={false}/>
+                              {logoText && logoText.map((banner,index)=>(
+                                  <TextBox 
+                                    key={index} 
+                                    changeText={(e)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(logoText)}} 
+                                    font_Size={(e)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].fontSize = e ;return newArray}),console.log(logoText)}} 
+                                    text_Bold={(bool)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].bold = !bool  ;return newArray}),console.log(logoText[index].bold,logoText[index])}}
+                                    text_Italics={(bool)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].italics = !bool  ;return newArray}),console.log(logoText[index].italics)}}
+                                    text_Underline={(bool)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].underline = !bool  ;return newArray}),console.log(logoText[index].underline)}}
+                                    type='banner' 
+                                    changeColor={(col)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].color[0] = col.hex  ;return newArray}),console.log(logoText[index].color,logoText[index])}}
+                                    changeColor2={(col)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].color[1] = col.hex  ;return newArray}),console.log(logoText[index].color,logoText[index])}}
+                                    changeColor3={(col)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].color[2] = col.hex  ;return newArray}),console.log(logoText[index].color,logoText[index])}}
+                                    setFamily={(fam)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].fontFamily = `font-[${fam}}]`  ;return newArray}),console.log(logoText[index].fontFamily,logoText[index])}}
+                                    gradValue={(grad)=>{setLogoText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(logoText[index].gradient,logoText[index])}}
+                                    changeLogo={(e)=>setLogoImage(e.target.files[0])}
+                                    placeholder='...sub text' 
+                                    value={logoText[index] && logoText[index].value}
+                                    logo={true}
+                                    modify={false}/> 
                                 ))}          
                             </div>
                             <div className="mt-1">
                               <div className="p-1 flex items-center mb-1 justify-between gap-3">
                                 <p className="p-1 text-xs font-semibold">headline</p>
                                 <div className='flex gap-2 items-center'>
-                                {headLineCount.length<2?<Button onClick={()=>{headLineCount.length<2?setHeadLineCount([...headLineCount,`headline${headLineCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {headLineCount.length>=1?<Button onClick={()=>{headLineCount.length>=1?setHeadLineCount(headLineCount.filter(headline=>headline==`headline${headLineCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
+                                  {headlineText.length<2?<Button onClick={()=>{headlineText.length<2?setHeadlineText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
+                                  {headlineText.length>0?<Button onClick={()=>{headlineText.length>0?setHeadlineText(headlineText.filter(textProp=>textProp.index && textProp.index==headlineText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                                 </div>
                               </div>
-                                {headLineCount && headLineCount.map((headline,index)=>(
+                                {headlineText && headlineText.map((headline,index)=>(
                                   <TextBox 
                                     key={index} 
-                                    changeText={(e)=>{setHeadlineText( prev=>{ let newArray = [...prev]; newArray[index] = e.target.value ;return newArray
-                                    }),console.log(headlineText)}} 
-                                    type='headline' placeholder='...headline text' 
+                                    changeText={(e)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(headlineText)}} 
+                                    font_Size={(e)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].fontSize = e ;return newArray}),console.log(headlineText)}} 
+                                    text_Bold={(bool)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].bold = !bool  ;return newArray}),console.log(headlineText[index].bold,headlineText[index])}}
+                                    text_Italics={(bool)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].italics = !bool  ;return newArray}),console.log(headlineText[index].italics)}}
+                                    text_Underline={(bool)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].underline = !bool  ;return newArray}),console.log(headlineText[index].underline)}}
+                                    type='headline' 
+                                    changeColor={(col)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].color[0] = col.hex  ;return newArray}),console.log(headlineText[index].color,headlineText[index])}}
+                                    changeColor2={(col)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].color[1] = col.hex  ;return newArray}),console.log(headlineText[index].color,headlineText[index])}}
+                                    changeColor3={(col)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].color[2] = col.hex  ;return newArray}),console.log(headlineText[index].color,headlineText[index])}}
+                                    setFamily={(fam)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].fontFamily = `font-[${fam}}]`  ;return newArray}),console.log(headlineText[index].fontFamily,headlineText[index])}}
+                                    gradValue={(grad)=>{setHeadlineText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(headlineText[index].gradient,headlineText[index])}}
+                                    placeholder='...headline text' 
+                                    value={headlineText[index] && headlineText[index].value}
                                     modify={true}/>   
                                 ))}          
                             </div>
@@ -319,37 +338,82 @@ return (
                               <div className="p-1 flex items-center mb-1 justify-between gap-3">
                                 <p className="p-1 text-xs font-semibold">subtext</p>
                                 <div className='flex gap-2 items-center'>
-                                {subTextCount.length<2?<Button onClick={()=>{subTextCount.length<2?setSubTextCount([...subTextCount,`subtext${subTextCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {subTextCount.length>=1?<Button onClick={()=>{subTextCount.length>=1?setSubTextCount(subTextCount.filter(subtext=>subtext==`subtext${subTextCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
+                                  {subText.length<2?<Button onClick={()=>{subText.length<2?setSubText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
+                                  {subText.length>0?<Button onClick={()=>{subText.length>0?setSubText(subText.filter(textObject=>textObject.index && textObject.index==subText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                                 </div>
                               </div>
-                                {subTextCount && subTextCount.map((subtext,index)=>(
-                                  <TextBox key={index} changeText={(e)=>{setSubText(e.target.value)}} type='subtext' placeholder='...sub text' modify={true}/>
+                                {subText && subText.map((subtext,index)=>(
+                                  <TextBox 
+                                    key={index} 
+                                    changeText={(e)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(subText)}} 
+                                    font_Size={(e)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].fontSize = e ;return newArray}),console.log(subText)}} 
+                                    text_Bold={(bool)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].bold = !bool  ;return newArray}),console.log(subText[index].bold,subText[index])}}
+                                    text_Italics={(bool)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].italics = !bool  ;return newArray}),console.log(subText[index].italics)}}
+                                    text_Underline={(bool)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].underline = !bool  ;return newArray}),console.log(subText[index].underline)}}
+                                    type='subtext' 
+                                    changeColor={(col)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].color[0] = col.hex  ;return newArray}),console.log(subText[index].color,subText[index])}}
+                                    changeColor2={(col)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].color[1] = col.hex  ;return newArray}),console.log(subText[index].color,subText[index])}}
+                                    changeColor3={(col)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].color[2] = col.hex  ;return newArray}),console.log(subText[index].color,subText[index])}}
+                                    setFamily={(fam)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].fontFamily = `font-[${fam}}]`  ;return newArray}),console.log(subText[index].fontFamily,subText[index])}}
+                                    gradValue={(grad)=>{setSubText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(subText[index].gradient,subText[index])}}
+                                    placeholder='...sub text' 
+                                    value={subText[index] && subText[index].value}
+                                    modify={true}/>   
                                 ))}          
+         
                             </div>
                             <div className="mt-1">
                               <div className="p-1 flex items-center mb-1 justify-between gap-3">
                                 <p className="p-1 text-xs font-semibold">badge</p>
                               <div className='flex gap-2 items-center'>
-
-                                {badgeCount.length<2?<Button onClick={()=>{badgeCount.length<2?setBadgeCount([...badgeCount,`badge${badgeCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {badgeCount.length>=1?<Button onClick={()=>{badgeCount.length>=1?setBadgeCount(badgeCount.filter(badge=>badge==`badge${badgeCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-                                </div>
+                                {badgeText.length<2?<Button onClick={()=>{badgeText.length<2?setBadgeText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
+                                {badgeText.length>0?<Button onClick={()=>{badgeText.length>0?setBadgeText(badgeText.filter(textObject=>textObject.index && textObject.index==badgeText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                               </div>
-                                {badgeCount && badgeCount.map((badge,index)=>(
-                                  <TextBox key={index} changeText={(e)=>{setBadgeText(e.target.value)}} type='badge' placeholder='...badge'/>
+                              </div>
+                              {badgeText && badgeText.map((badgetext,index)=>(
+                                  <TextBox 
+                                    key={index} 
+                                    changeText={(e)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(badgeText)}} 
+                                    font_Size={(e)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].fontSize = e ;return newArray}),console.log(badgeText)}} 
+                                    text_Bold={(bool)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].bold = !bool  ;return newArray}),console.log(badgeText[index].bold,badgeText[index])}}
+                                    text_Italics={(bool)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].italics = !bool  ;return newArray}),console.log(badgeText[index].italics)}}
+                                    text_Underline={(bool)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].underline = !bool  ;return newArray}),console.log(badgeText[index].underline)}}
+                                    type='badgetext' 
+                                    changeColor={(col)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].color[0] = col.hex  ;return newArray}),console.log(badgeText[index].color,badgeText[index])}}
+                                    changeColor2={(col)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].color[1] = col.hex  ;return newArray}),console.log(badgeText[index].color,badgeText[index])}}
+                                    changeColor3={(col)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].color[2] = col.hex  ;return newArray}),console.log(badgeText[index].color,badgeText[index])}}
+                                    setFamily={(fam)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].fontFamily = `font-[${fam}}]`  ;return newArray}),console.log(badgeText[index].fontFamily,badgeText[index])}}
+                                    gradValue={(grad)=>{setBadgeText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(badgeText[index].gradient,badgeText[index])}}
+                                    placeholder='...badge text' 
+                                    value={badgeText[index] && badgeText[index].value}
+                                    /> 
                                 ))}          
                             </div>
                             <div className="mt-1">
                               <div className="p-1 flex items-center mb-1 justify-between gap-3">
                                 <p className="p-1 text-xs font-semibold">banner</p>
                                 <div className='flex gap-2 items-center'>
-                                {bannerCount.length<2?<Button onClick={()=>{bannerCount.length<2?setBannerCount([...bannerCount,`banner${bannerCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {bannerCount.length>=1?<Button onClick={()=>{bannerCount.length>=1?setBannerCount(bannerCount.filter(banner=>banner==`banner${bannerCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
+                                {bannerText.length<2?<Button onClick={()=>{bannerText.length<2?setBannerText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
+                                {bannerText.length>0?<Button onClick={()=>{bannerText.length>0?setBannerText(bannerText.filter(textObject=>textObject.index && textObject.index==bannerText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                                 </div>
                               </div>
-                                {bannerCount && bannerCount.map((banner,index)=>(  
-                                  <TextBox key={index} changeText={(e)=>{setBannerText(e.target.value)}} type='banner' placeholder='...banner' />
+                              {bannerText && bannerText.map((banner,index)=>(
+                                  <TextBox 
+                                    key={index} 
+                                    changeText={(e)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(bannerText)}} 
+                                    font_Size={(e)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].fontSize = e ;return newArray}),console.log(bannerText)}} 
+                                    text_Bold={(bool)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].bold = !bool  ;return newArray}),console.log(bannerText[index].bold,bannerText[index])}}
+                                    text_Italics={(bool)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].italics = !bool  ;return newArray}),console.log(bannerText[index].italics)}}
+                                    text_Underline={(bool)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].underline = !bool  ;return newArray}),console.log(bannerText[index].underline)}}
+                                    type='banner' 
+                                    changeColor={(col)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].color[0] = col.hex  ;return newArray}),console.log(bannerText[index].color,bannerText[index])}}
+                                    changeColor2={(col)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].color[1] = col.hex  ;return newArray}),console.log(bannerText[index].color,bannerText[index])}}
+                                    changeColor3={(col)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].color[2] = col.hex  ;return newArray}),console.log(bannerText[index].color,bannerText[index])}}
+                                    setFamily={(fam)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].fontFamily = `font-[${fam}}]`  ;return newArray}),console.log(bannerText[index].fontFamily,bannerText[index])}}
+                                    gradValue={(grad)=>{setBannerText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(bannerText[index].gradient,bannerText[index])}}
+                                    placeholder='...sub text' 
+                                    value={bannerText[index] && bannerText[index].value}
+                                    modify={true}/> 
                                 ))}          
                             </div>        
                             <div className="mt-1">
@@ -375,15 +439,15 @@ return (
                       </div>                              
                     </div>
                   </div>
-                  <div className="rounded-sm max-h-min my-2 border p-2">
-                    <div className='flex justify-between items-center'>
-                      <p className="inline-block text-xs">Set up quick poster</p>
-                      <div>
-                          <Switch checked={custom} onCheckedChange={()=>setCustom(!custom)} />
-                      </div>
+                </div>
+                <div className="rounded-sm max-h-min my-2 border p-2">
+                  <div className='flex justify-between items-center'>
+                    <p className="inline-block text-xs">Set up quick poster</p>
+                    <div>
+                        <Switch checked={custom} onCheckedChange={()=>setCustom(!custom)} />
                     </div>
-                    <Button disabled={custom==true} size='sm' onClick={designTrigger} className=' mt-1 py-1 px-2 font-semibold text-xs border-border' variant={!custom?'':'icon'}><Image  src={!custom?customImgWhite:customImg} alt="An example image" width={20} height={20} className='mr-1'/> Customize</Button>
                   </div>
+                  <Button disabled={custom==true} size='sm' onClick={designTrigger} className=' mt-1 py-1 px-2 font-semibold text-xs border-border' variant={!custom?'':'icon'}><Image  src={!custom?customImgWhite:customImg} alt="An example image" width={20} height={20} className='mr-1'/> Customize</Button>
                 </div>
               </CardContent>
             </Card>
@@ -450,199 +514,10 @@ export default NewAd
 
 
 
-const PosterDesignForm = ({color,gradient,bg_img,logo,headline,subtext,badge,banner,changeHeadlineText}) => {
 
-  const [colorGradient, setColorGradient] = useState(false) 
 
-  const [logoText, setLogoText] = useState('')
-  const [logoImage, setLogoImage] = useState()
-  const [image, setImage] = useState([])
-  const [headlineText, setHeadlineText] = useState([])
-  const [subText, setSubText] = useState('')
-  const [bannerText, setBannerText] = useState('')
-  const [badgeText, setBadgeText] = useState('')
-  const [bgImage, setBgImage] = useState()
 
-  const [logoCount, setLogoCount] = useState([])
-  const [imageCount, setImageCount] = useState([])
-  const [bannerCount, setBannerCount] = useState([])
-  const [badgeCount, setBadgeCount] = useState([])
-  const [headLineCount, setHeadLineCount] = useState([])
-  const [subTextCount, setSubTextCount] = useState([])
-  const [posterStyle, setPosterStyle] = useState(designs[0])
-
-  function openImageDialog(e){
-    e.preventDefault()
-    const nextInput = document.getElementById('next-image')
-    nextInput.click()
-  }
-
-  function addImage({target}){
-    const img = target.files[0]
-    let reader = new FileReader()
-    reader.onload=({target})=>{
-      setImage([...image,`${target.result}`])
-      setImageCount([...imageCount,`${image.length+1}`])
-    }
-    reader.readAsDataURL(img) 
-  }
-
-  // function updateInput(value,type,index){
-  //   ['set'+type](prev=>{
-  //     let newArray = [...prev]
-  //     newArray[index] = target.value
-  //     return newArray
-  //   })
-   
-  // }
-
-  // useEffect(()=>{
-  //   if(posterStyle==(designs[0]) || posterStyle==(designs[3])){
-  //     setLogoCount([...logoCount,`logo${logoCount.length+1}`])
-  //   } else if ( posterStyle==(designs[1]) || posterStyle==(designs[2]) || posterStyle==(designs[4])){
-
-  //   } else {
-
-  //   }
-                                  
-  // },[])
-
-  return (
-    <div>
-        <ScrollArea className='whitespace-nowrap overflow-x-scroll'>
-          <div className="flex mb-1 w-max gap-2">
-            {designs.map((design,index) =>(
-              <div key={index} className='w-fit' onClick={()=>{setPosterStyle(designs[index]),console.log(index,designs[index])}}>
-                <Card className={posterStyle.src==design.src?'mx-1 overflow-clip  w-36 h-24 border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-36 h-24'} >
-                  <Image alt={`format${index}`} src={design.src} className='scale-[1.07] relative  h-full w-full'/>
-                </Card>
-                <p className="text-center text-xs my-1">poster {index+1}</p>
-              </div>
-            ))}
-          </div>
-          <ScrollBar orientation='horizontal'/>
-        </ScrollArea>
-      <div className="mt-2 ml-1">
-          <label htmlFor="" className=' ml-[2px] items-center flex justify-between font-semibold text-xs' ><span>background</span></label>
-          <div className="border px-3 mt-1 py-1 rounded">
-              
-              {color? <div className="flex mb-3 justify-between items-center"> 
-                  <span className='text-xs'> color</span>                                           
-                  <div className={ `p-1 shadow-md justify-center items-center inline-flex cursor-pointer` } onClick={()=>setPickState(!pickState) }>
-                    <Button disabled={colorGradient==true} className={ `w-6 h-3 inline-block rounded-sm bg-[slateblue]` } />
-                  </div>
-              </div>:''}                                                                                
-             
-              {gradient?<div >
-                <div className='flex justify-between max-h-min items-center'>
-                  <p className="inline-block text-xs">color gradient</p>
-                  <div>
-                      <Switch checked={colorGradient==true} onCheckedChange={()=>setColorGradient(!colorGradient)} />
-                  </div>
-                </div>                
-                <div className={colorGradient?"grid mt-2 ml-2 grid-rows-[1fr] transition-collapse":"grid mt-2 ml-2 grid-rows-[0fr] transition-collapse"}>
-                  <div className="overflow-hidden">
-                    
-                    <div className="flex mb-3 justify-between items-center">
-                      <AlertDialogTrigger asChild>
-                        <Button size='sm' variant='outline' className='p-1 h-fit inline-flex rounded-sm items-center' >gradient style<ArrowUpLeftIcon className='h-2 w-3'/><ArrowDownRightIcon className='h-2 w-3'/></Button>
-                      </AlertDialogTrigger>    
-                    </div>
-                  </div>                                            
-                </div>                                        
-              </div>:''}
-
-              {bg_img?<div className="mb-2 mt-2 flex justify-between items-center">
-                <input type="file" name="image" onChange={(e)=>setBgImage(e.target.files[0])} hidden id="bg-image" />  
-                <Button size='sm' onClick={bgImageTrigger} className='py-1 pl-2 pr-1 h-fit inline-flex rounded-sm items-center' variant='outline'>use image<ImageIcon className='w-4 h-2 '/></Button>
-                <GearIcon className='w-6 h-6 text-black'/>
-              </div> :'' }
-          </div>
-      </div>
-      <div className=' mt-2 ml-1 relative'>
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">Logo</p>
-          <div className='flex gap-2 items-center'>
-
-            {logoCount.length<1?<Button onClick={()=>{logoCount.length<1?setLogoCount([...logoCount,`logo${logoCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {logoCount.length>=1?<Button onClick={()=>{logoCount.length>=1?setLogoCount(logoCount.filter(logo=>logo==`logo${logoCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-          </div>
-            {logoCount && logoCount.map((logo,index)=>(
-              <TextBox key={index} changeText={(e)=>{setLogoText(e.target.value)}} type='logo' changeLogo={(e)=>setLogoImage(e.target.files[0])} placeholder='...logo text' logo={true} modify={false}/>
-            ))}          
-        </div>
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">headline</p>
-            <div className='flex gap-2 items-center'>
-            {headLineCount.length<2?<Button onClick={()=>{headLineCount.length<2?setHeadLineCount([...headLineCount,`headline${headLineCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {headLineCount.length>=1?<Button onClick={()=>{headLineCount.length>=1?setHeadLineCount(headLineCount.filter(headline=>headline==`headline${headLineCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-          </div>
-            {headLineCount && headLineCount.map((headline,index)=>(
-              <TextBox key={index} changeText={(e)=>changeHeadlineText(e,index)} type='headline' placeholder='...headline text' modify={true}/>   
-            ))}          
-        </div>
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">subtext</p>
-            <div className='flex gap-2 items-center'>
-            {subTextCount.length<2?<Button onClick={()=>{subTextCount.length<2?setSubTextCount([...subTextCount,`subtext${subTextCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {subTextCount.length>=1?<Button onClick={()=>{subTextCount.length>=1?setSubTextCount(subTextCount.filter(subtext=>subtext==`subtext${subTextCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-          </div>
-            {subTextCount && subTextCount.map((subtext,index)=>(
-              <TextBox key={index} changeText={(e)=>{setSubText(e.target.value)}} type='subtext' placeholder='...sub text' modify={true}/>
-            ))}          
-        </div>
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">badge</p>
-          <div className='flex gap-2 items-center'>
-
-            {badgeCount.length<2?<Button onClick={()=>{badgeCount.length<2?setBadgeCount([...badgeCount,`badge${badgeCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {badgeCount.length>=1?<Button onClick={()=>{badgeCount.length>=1?setBadgeCount(badgeCount.filter(badge=>badge==`badge${badgeCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-          </div>
-            {badgeCount && badgeCount.map((badge,index)=>(
-              <TextBox key={index} changeText={(e)=>{setBadgeText(e.target.value)}} type='badge' placeholder='...badge'/>
-            ))}          
-        </div>
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">banner</p>
-            <div className='flex gap-2 items-center'>
-            {bannerCount.length<2?<Button onClick={()=>{bannerCount.length<2?setBannerCount([...bannerCount,`banner${bannerCount.length+1}`]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {bannerCount.length>=1?<Button onClick={()=>{bannerCount.length>=1?setBannerCount(bannerCount.filter(banner=>banner==`banner${bannerCount.length-1}`)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-          </div>
-            {bannerCount && bannerCount.map((banner,index)=>(  
-              <TextBox key={index} changeText={(e)=>{setBannerText(e.target.value)}} type='banner' placeholder='...banner' />
-            ))}          
-        </div>        
-        <div className="mt-1">
-          <div className="p-1 flex items-center mb-1 justify-between gap-3">
-            <p className="p-1 text-xs font-semibold">add image</p>
-            <div className='flex gap-2 items-center'>
-            {imageCount.length<2?<Button onClick={(e)=>{imageCount.length<2?openImageDialog(e):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-            {imageCount.length>=1?<Button onClick={()=>{imageCount.length>=1?(setImageCount(imageCount.filter(image=>image==`image${imageCount.length-1}`)),setImage(image.filter((img,i)=>i==image.length-1))):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-            </div>
-            <input type="file" name="next-image" onChange={addImage} hidden id="next-image" />  
-          </div>
-          <div>
-            {image && image.map((image,index)=>(  
-              <Image key={index} height={50} width={100} alt={`image${index}`} src={image} className='relative inline-block h-[100px] border rounded-sm mr-1'/>
-            ))} 
-          </div>        
-        </div>        
-      </div>
-    </div>
-  )
-}
-
-const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFont}) => {
+const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, changeColor,changeColor2, changeColor3,setFamily,gradValue,type, logo, modify, label, placeholder,value}) => {
 
   const [activeDialog, setActiveDialog]= useState('')
 
@@ -667,8 +542,9 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
     italics:false,
     underline:false,
     gradient:gradient,
-    color:[color,color2,color3]
   })  
+
+  
 
   function logoImageTrigger(e){
     e.preventDefault()
@@ -696,13 +572,13 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                   </div>
                   <div className={accordion1?"grid grid-rows-[1fr] px-3 transition-collapse":"grid grid-rows-[0fr] px-3 transition-collapse"}>
                     <div className='overflow-hidden'>
-                    <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} />
+                    <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} onChangeComplete={(col)=>changeColor(col)}/>
                     </div>
                   </div>
                   <div className=' flex px-3 justify-between items-center'>
                     <span className="text-sm font-medium pb-1 mr-4">gradient color</span>
                       <div className='py-1' >
-                          <Switch checked={gradient} onCheckedChange={()=>{setAccordion1(false), setGradient(!gradient)}} />
+                          <Switch checked={gradient} onCheckedChange={()=>{setAccordion1(false), setGradient(!gradient), gradValue(gradient)}} />
                       </div>
                   </div>
                   <div className={gradient?"grid grid-rows-[1fr] px-3 transition-collapse":"grid grid-rows-[0fr] px-3 transition-collapse"}>
@@ -717,13 +593,13 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                           <Button onClick={()=>setThirdGradient(!thirdGradient)} variant="outline" className='p-0 w-6 h-6' size="icon">{!thirdGradient?<Plus className='h-full w-full' />:<Minus className='h-full w-full'/>}</Button>
                         </div> 
                         <TabsContent value="grad 1" className='mt-1 p-1'>
-                          <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} />
+                          <ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} onChangeComplete={(col)=>changeColor(col)} />
                         </TabsContent>
                         <TabsContent value="grad 2" className='mt-1 p-1'>
-                          <ColorPicker color={color2} hideInput={["rgb", "hsv"]} height={100} onChange={setColor2} />
+                          <ColorPicker color={color2} hideInput={["rgb", "hsv"]} height={100} onChange={setColor2} onChangeComplete={(col)=>changeColor2(col)} />
                         </TabsContent>
                         <TabsContent value="grad 3" className='mt-1 p-1'>
-                          <ColorPicker color={color3} hideInput={["rgb", "hsv"]} height={100} onChange={setColor3} />
+                          <ColorPicker color={color3} hideInput={["rgb", "hsv"]} height={100} onChange={setColor3}  onChangeComplete={(col)=>changeColor3(col)} />
                         </TabsContent>
                     </Tabs>
                     </div>
@@ -741,7 +617,7 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                   <ScrollArea className=' overflow-x-scroll'>
                     <div className="flex mb-1 w-max gap-2 ">
                       {fontFamilies.map((fam,index) =>(
-                        <div key={index} className={`w-fit fam-${index}`} onClick={()=>setLocalData(prev=>({...prev,fontFamily:fontFamilies[index]}))}>
+                        <div key={index} className={`w-fit fam-${index}`} onClick={()=>{setLocalData(prev=>({...prev,fontFamily:fontFamilies[index]})),setFamily(index)}}>
                           <Card  className={localData.fontFamily==fam?'mx-1 overflow-clip  w-fit rounded-sm h-fit border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-fit rounded-sm h-fit'} >
                             <p style={{fontFamily:fam}} className={`font-semibold text-sm px-5 py-1`}>Aa</p>
                           </Card>
@@ -755,19 +631,19 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
                   <div className="mt-1">
                     <h4 className="mb-1 mx-2 text-[0.7rem] font-semibold leading-none">text size</h4>
                     <div className="flex px-2 justify-between items-center">
-                       <Slider onValueChange={(e)=>{setFontSize(e),console.log(fontSize)}} defaultValue={[14]} min={6} max={24} step={2} className={'w-40'} />
+                       <Slider onValueChange={(e)=>{setFontSize(e),font_Size(e)}} defaultValue={[14]} min={6} max={24} step={2} className={'w-40'} />
                       <p className="text-sm border py-[3px] px-2">{fontSize[0]}</p>
                     </div>
                   </div>
                   <div className="mt-[5px]">
                     <ToggleGroup className='flex gap-2 justify-start' size='sm' variant="outline" type="multiple">
-                        <ToggleGroupItem onClick={()=>{setBold(!bold),console.log(bold)}} value="bold" aria-label="Toggle bold">
+                        <ToggleGroupItem onClick={()=>{setBold(!bold),text_Bold(bold)}} value="bold" aria-label="Toggle bold">
                           <Bold className="h-4 w-4" />
                         </ToggleGroupItem>
-                        <ToggleGroupItem onClick={()=>{setItalics(!italics)}} value="italic" aria-label="Toggle italic">
+                        <ToggleGroupItem onClick={()=>{setItalics(!italics),text_Italics(italics)}} value="italic" aria-label="Toggle italic">
                           <Italic className="h-4 w-4" />
                         </ToggleGroupItem>
-                        <ToggleGroupItem onClick={()=>{setUnderline(!underline)}} value="underline" aria-label="Toggle underline">
+                        <ToggleGroupItem onClick={()=>{setUnderline(!underline),text_Underline(underline)}} value="underline" aria-label="Toggle underline">
                           <Underline className="h-4 w-4" />
                         </ToggleGroupItem>
                       </ToggleGroup>
@@ -776,13 +652,13 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
 
                  : ""
             }
-            
+            <AlertDialogDescription/>
           </AlertDialogContent>
         {label && <><label htmlFor="" className='relative ml-[2px] p-1 items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>{label}</span> </label>
         <Separator/></> }
         
         <div className="flex justify-between px-2 py-1 items-center h-7">
-          <input onChange={(e)=>{changeText(e),setLocalData(prev=>({...prev,value:`${e.target.value}`}))}} className='h-full rounded-none te border-none outline-none placeholder:italic' placeholder={placeholder} type='text' />
+          <input onChange={(e)=>{changeText(e),setLocalData(prev=>({...prev,value:`${e.target.value}`}))}} className='h-full rounded-none flex-grow border-none outline-none placeholder:italic' placeholder={placeholder} type='text' />
           {modify && <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span>}
           {logo && <div className='flex justify-start items-center gap-2'>
           <Button size='sm' className='p-1 h-fit m-1 inline-flex rounded-sm items-center' onClick={logoImageTrigger} variant='secondary'><ImageIcon className='w-4 h-2 '/>image</Button>
@@ -795,10 +671,7 @@ const TextBox = ({changeText, type, logo, modify, label, placeholder,font,setFon
           </AlertDialogTrigger>                                  
           <AlertDialogTrigger asChild>
             <LetterTextIcon onClick={()=>setActiveDialog('font')} className='w-5 rounded-lg bg-white h-5'/>
-          </AlertDialogTrigger>                                  
-          <AlertDialogTrigger asChild>
-            <Brush onClick={()=>setActiveDialog('font')} className='w-5 rounded-lg bg-white h-5'/>
-          </AlertDialogTrigger>                                  
+          </AlertDialogTrigger>                                                                
         
         </div>
         </AlertDialog>
@@ -872,7 +745,7 @@ const Coloring = ({h4}) => {
 
 
 
-const AiBox = ({result,content,useModification}) => {
+const AiBox = ({result,content,useModification,reModify}) => {
   return (
     <div className=''>
       <p className="px-2 text-gray-400">
@@ -883,8 +756,10 @@ const AiBox = ({result,content,useModification}) => {
         {result}
       </div>
       <div className="flex items-center px-2 mt-1 justify-between">
-        <button size='sm' disabled={!result} className='rounded-2xl text-white text-xs bg-black px-3 disabled:opacity-50 py-1'>Improve</button>
-        <button size='sm' disabled={!result} className='rounded-2xl text-xs text-white bg-black px-3 disabled:opacity-50 py-1' onClick={useModification}>Use</button>
+        <button size='sm' disabled={!result} className='rounded-2xl text-white text-xs bg-black px-3 disabled:opacity-50 py-1' onClick={reModify}>Improve</button>
+        <AlertDialogCancel>
+          <button size='sm' disabled={!result} className='rounded-2xl text-xs text-white bg-black px-3 disabled:opacity-50 py-1' onClick={useModification}>Use</button>
+        </AlertDialogCancel>
       </div>
     </div>
   )
