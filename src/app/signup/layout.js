@@ -3,7 +3,7 @@
 export default function SignupLayout({ children }) {
   
   return (   
-    <div className='flex flex-col p-2 overflow-hidden flex-grow'>
+    <div className='pb-2 overflow-hidden h-full '>
       {children}
     </div>    
   );
