@@ -13,7 +13,7 @@ const SignUp = () => {
   return (
     <div className='h-full flex font-Inter flex-col'>
       <header className="p-5 justify-start flex">
-        <h1 className="font-Madetommy font-bold text-xl">adFeed</h1>    
+        <Link href={'/'} className="decoration-none text-primary"><h1 className="font-Madetommy decoration-none text-primary text-2xl">adFeed</h1></Link>    
       </header>
       <p className="pt-8 pb-0 px-5 text-center text-base font-semibold">Get Started!</p>
       <div className="px-5 py-1 flex flex-col justify-start flex-grow">
