@@ -5,7 +5,7 @@ import Header from "./header";
 export const metadata = {
   title: "adFeed",
   description: "",
-  themeColor:'#030712;',
+  // themeColor:"#030712;",
 };
 
 export default function RootLayout({ children }) {

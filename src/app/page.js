@@ -6,22 +6,39 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from 'react'
 import profilePix from '../../public/profilepix2.jpg'
+import { XIcon } from "lucide-react";
 
 
 export default function Home() {
-
+  const [dropState, setDropState] = useState(false)
+  useEffect(()=>{
+    document.onpointerdown = ({target}) => {
+      if(dropState&&target.closest('div#drop-box'))return
+      else if(dropState) {
+        setDropState(!dropState)
+      }
+    }
+  })
   return(
-  <Drawer side='top'>
-    <div className="relative h-full overflow-x-clip overflow-y-scroll">
-      <div className="min-h-[94svh] bg-gray-950 text-gray-50">
-        <header className="p-5 justify-between flex">
-          <Link href={'/'}  className="decoration-none text-white"><h1 className="font-Madetommy text-2xl">adFeed</h1></Link>
+
+    <div onScroll={(e)=>{dropState?setDropState(false):''}} className="relative h-full overflow-x-clip z-0 overflow-y-scroll">
+      <div id='drop-box' className={dropState?'absolute bg-white border-b border-gray-600 font-Inter font-medium text-lg p-16  w-full top-0 z-30 pointer-events-auto right-0 h-[26rem] transition-[_opacity_150ms_ease-in-out_,_top_150ms_ease-in_]':"absolute font-Inter font-medium text-lg p-16 bg-white opacity-0 left-0 -top-1/2 w-full pointer-events-none -z-50 transition-[_opacity_100ms_ease-in-out_,_top_150ms_ease-in_]"}>
+            <div className='flex relative justify-end'><XIcon onClick={()=>setDropState(false)} className="h-9 relative -top-10 -right-7 w-9 p-1"/></div>
+            <Link href={'/#'} className="decoration-none text-primary"><p className='mb-2 mt-6'>Pricing</p></Link>
+            <Link href={'/#'} className="decoration-none text-primary"><p className='mb-3 p-1'>About</p></Link>
+            <Link href={'/#'} className="decoration-none text-primary"><p className='mb-3 p-1'>FAQs</p></Link>
+            <Link href={'/signin'} className="decoration-none mx-auto mt-4 text-primary"><Button size='sm' className="rounded-lg px-8 font-Montserrat relative flex justify-center items-center mt-5 py-6 text-base bg-gradient-to-r from-gradient1 to-gradient2"><span>Sign in</span>
+            </Button></Link>
+      </div>
+      <div className="min-h-[94svh]  bg-gray-950 text-gray-50">
+        <header className="px-5 pt-7 pb-5 justify-between flex">
+          <Link href={'/'}  className={dropState?"z-40 decoration-none text-primary":"z-40 decoration-none text-white"}><h1 className="font-Madetommy text-2xl">adFeed</h1></Link>
           <nav className="flex gap-3">
             <Link href={'/signin'} className="decoration-none"><Button size='sm' className='bg-gray-100 decoration-none flex items-center justify-center text-black px-3 py-0'><span>Sign in</span></Button></Link>
-            <DrawerTrigger asChild><Button size='sm'  className='border-white flex items-center justify-center border px-2 py-0'><span className="fill-white">{menu}</span></Button></DrawerTrigger>
+            <Button size='sm' onClick={()=>setDropState(!dropState)} className='border-white flex items-center justify-center border px-2 py-0'><span className="fill-white">{menu}</span></Button>
           </nav>
         </header>
-        <div className="px-1 py-5 flex flex-col justify-center h-fit mt-7">
+        <div className="px-3 py-5 flex flex-col justify-center h-fit mt-7">
           <h1 className="text-5xl text-center font-bold font-Clash">Smarter Ads? <br/>Start Here.</h1>
           <p className="text-lg text-gray-200 text-center mt-12 mx-2  font-Inter font-mediuml">adFeed helps you <span className="font-bold text-white">create ads</span> and <span className="font-bold text-white">manage</span> your engagements with faster and fewer clicks.</p>
 
@@ -45,10 +62,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
-    <DrawerContent side='top'>
-      hello world
-    </DrawerContent>
-  </Drawer>  
   );
 }
 
