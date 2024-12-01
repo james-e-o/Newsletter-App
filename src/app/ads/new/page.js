@@ -108,12 +108,26 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           const nextInput = document.getElementById('next-image')
           nextInput.click()
         }
+        function logoImageTrigger(e){
+          e.preventDefault()
+          const logoInput = document.getElementById('logo-image')
+          logoInput.click()
+        }
       
         function addImage({target}){
           const img = target.files[0]
           let reader = new FileReader()
           reader.onload=({target})=>{
             setImage([...image,`${target.result}`])
+            setImageCount([...imageCount,`${image.length+1}`])
+          }
+          reader.readAsDataURL(img) 
+        }
+        function addLogoImage({target}){
+          const img = target.files[0]
+          let reader = new FileReader()
+          reader.onload=({target})=>{
+            setLogoImage(target.result)
             setImageCount([...imageCount,`${image.length+1}`])
           }
           reader.readAsDataURL(img) 
@@ -146,8 +160,8 @@ return (
                   {
                       activeDialog === 'headline'? <AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setHeading(response)} content={heading}/>: 
                       activeDialog === 'description'?<AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setDescription(response)} content={description}/> :
-                      activeDialog === 'poster-text'?<InitializePosterText type={(value)=>{posterText.length<2?setPosterText(prev => [...prev,{index:prev.length, type:value, value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} /> :
-                      activeDialog === 'poster-image'?<InitializePosterImage /> : ""
+                      activeDialog === 'poster-text'?<InitializePosterText type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} /> : ""
+                     
                   }
                   
                 </AlertDialogContent>
@@ -276,13 +290,13 @@ return (
                         <div className=' mt-2 relative'>
 
                           <div className="mt-1">
-                            <div className="p-1 flex items-center mb-1 justify-between gap-3">
+                            {/* <div className="p-1 flex items-center mb-1 justify-between gap-3">
                               <p className="p-1 text-xs font-semibold">headline</p>
                               <div className='flex gap-2 items-center'>
                                 {posterText.length<2?<Button onClick={()=>{posterText.length<2?setPosterText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
                                 {posterText.length>0?<Button onClick={()=>{posterText.length>0?setPosterText(posterText.filter(textProp=>textProp.index && textProp.index==posterText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                               </div>
-                            </div>
+                            </div> */}
                               {posterText && posterText.map((headline,index)=>(
                                 <TextBox 
                                   key={index} 
@@ -299,19 +313,22 @@ return (
                                   gradValue={(grad)=>{setPosterText( prev => { let newArray = [...prev]; newArray[index].underline = !grad ;return newArray}),console.log(posterText[index].gradient,posterText[index])}}
                                   placeholder={`...${posterText[index].type} text`}
                                   value={posterText[index] && posterText[index].value}
-                                  modify={true}/>   
+                                  logo={posterText[index].logo}
+                                  logoImageTrigger={(e)=>{posterText[index].logo?logoImageTrigger(e):''}}
+                                  modify={posterText[index].modify}/>  
+                                    
                               ))}          
                           </div>
                     
                           <div className="mt-1">
-                            <div className="p-1 flex items-center mb-1 justify-between gap-3">
+                            {/* <div className="p-1 flex items-center mb-1 justify-between gap-3">
                               <p className="p-1 text-xs font-semibold">add image</p>
                               <div className='flex gap-2 items-center'>
                               {imageCount.length<2?<Button onClick={(e)=>{imageCount.length<2?openImageDialog(e):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
                               {imageCount.length>=1?<Button onClick={()=>{imageCount.length>=1?(setImageCount(imageCount.filter(image=>image==`image${imageCount.length-1}`)),setImage(image.filter((img,i)=>i==image.length-1))):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
                               </div>
-                              <input type="file" name="next-image" onChange={addImage} hidden id="next-image" />  
-                            </div>
+                                
+                            </div> */}
                             <div>
                               {image && image.map((image,index)=>(  
                                 <Image key={index} height={50} width={100} alt={`image${index}`} src={image} className='relative inline-block h-[100px] border rounded-sm mr-1'/>
@@ -319,8 +336,10 @@ return (
                             </div>        
                           </div> 
                           <p className="mt-2 px-1 font-Inter flex gap-2">
-                            <AlertDialogTrigger asChild><Button size='sm' onClick={(e)=>{setActiveDialog('poster-text')}} className='flex-grow px-1'><Text /> add text</Button></AlertDialogTrigger>
-                            <AlertDialogTrigger asChild><Button size='sm' onClick={(e)=>{setActiveDialog('poster-image')}} className='flex-grow px-1'><ImageIcon/> add image</Button></AlertDialogTrigger>
+                            <AlertDialogTrigger asChild><Button size='sm' disabled={posterText>=9} onClick={(e)=>{setActiveDialog('poster-text')}} className='flex-grow px-1'><Text /> add text</Button></AlertDialogTrigger>
+                            <AlertDialogTrigger asChild><Button size='sm' onClick={(e)=>{image.length<3?openImageDialog(e):''}} className='flex-grow px-1'><ImageIcon/> add image</Button></AlertDialogTrigger>
+                            <input type="file" name="next-image" onChange={addImage} hidden id="next-image" />
+                            <input type="file" name="next-image" onChange={addLogoImage} hidden id="logo-image" />
                           </p>
 
                         </div>
@@ -410,7 +429,7 @@ export default NewAd
 
 
 
-const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, changeColor,changeColor2, changeColor3,setFamily,gradValue,type, logo, modify, label, placeholder,value}) => {
+const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, changeColor,changeColor2, changeColor3,setFamily,gradValue,type, logo, modify, label, placeholder,logoImageTrigger}) => {
 
   const [activeDialog, setActiveDialog]= useState('')
 
@@ -439,11 +458,7 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, ch
 
   
 
-  function logoImageTrigger(e){
-    e.preventDefault()
-    const logoInput = document.getElementById('bg-image')
-    logoInput.click()
-  }
+ 
   
   return (
       <div className="rounded-md text-sm border mb-3 border-gray-200 overflow-clip">
@@ -664,22 +679,16 @@ const InitializePosterText = ({type,i}) => {
   return (
     <div>
       <p className="mb-1 mr-1 font-bold text-xs">select text type</p>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,true)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
     </div>
   )
 }
 
-const InitializePosterImage = () => {
-  return (
-    <div>
-      hello world
-    </div>
-  )
-}
+
 const Drafts = () => {
   return (
     <div>
