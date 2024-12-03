@@ -119,8 +119,8 @@
   margin-top: 0.35rem;
 }
 .pop-slide{
-  left: 0%;
-  
+  left: calc(0% + 1px);
+  z-index: 100;
 }
 .color {
   width: 36px;

@@ -51,14 +51,11 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         // UI
         const [activeDialog, setActiveDialog]= useState('') // AlertDialog content
         const [custom, setCustom] = useState(false) // Quick poster design
-        const [response, setResponse] = useState('') // AI modify response
-            // TextBox component types
-            const [imageCount, setImageCount] = useState([])
-          
-          
-     
-
+        const [isClient, setIsClient] = useState(false) // Ensure client side rendering    
+        const [sliderState, setSliderState] = useState(false) // Sliding UI    
+        
         // DATA
+        const [response, setResponse] = useState('') // AI modify response    
         const [heading, setHeading] = useState('')
         const [description, setDescription] = useState('')
         const [bgImage, setBgImage] = useState([])
@@ -66,8 +63,8 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         const [posterText, setPosterText] = useState([])
         const [image, setImage] = useState([])
         const [posterStyle, setPosterStyle] = useState(designs[0])
-        
-
+        const [categories, setCategories] = useState(['cooking', 'reading'])
+      
         function bgImageTrigger(e){
           e.preventDefault()
           const input = document.getElementById('bg-image')
@@ -87,10 +84,6 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           setResponse(data.content)
         }
 
-        function modifyDescription(e){
-         
-        }
-    
         const tags = Array.from({ length: 10 }).map(
           (_, i, a) => `v1.2.0-beta.${a.length - i}`
         )
@@ -101,7 +94,6 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           formdata.append('headline',posterText)
           console.log(formdata,posterText)
         }
-
 
         function openImageDialog(e){
           e.preventDefault()
@@ -119,7 +111,6 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           let reader = new FileReader()
           reader.onload=({target})=>{
             setImage([...image,`${target.result}`])
-            setImageCount([...imageCount,`${image.length+1}`])
           }
           reader.readAsDataURL(img) 
         }
@@ -128,18 +119,31 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           let reader = new FileReader()
           reader.onload=({target})=>{
             setLogoImage(target.result)
-            setImageCount([...imageCount,`${image.length+1}`])
           }
           reader.readAsDataURL(img) 
         }
 
-        // useEffect(()=>{
-        //   fetch('/api/get-designs')
-        //   setPosterStyle(designs[0])
-        // },[posterStyle])
+        useEffect(()=>{
+          setIsClient(true)
+          setPosterStyle([0])
+        },[])
 
 return (
-  <Tabs defaultValue="account" className="w-full h-full flex mt-[3px] flex-col overflow-y-clip">   
+  <Tabs defaultValue="account" className="w-full relative h-full flex mt-[3px] flex-col overflow-y-clip">  
+    <div id='pop-slide' className='h-full w-full p-2 transition-all rounded-lg overflow-clip bg-white absolute border z-50 left-[106%] flex flex-col'>
+        <div className='flex justify-start p-2'>
+            <ArrowLeft className='scale-95' onClick={()=>{setSliderState(false)}}/>
+        </div>
+        <div className='p-2'>
+
+          <Drafts />
+          {/* {
+            activeSlide === 'topics'? <Topics/>: 
+            // activeSlide === 'draft'? <Drafts/>: 
+            activeSlide === 'customize'?<MakeDesign/> : ""
+          } */}
+        </div>
+    </div> 
     <AlertDialog>          
     <TabsList className="grid w-full grid-cols-2">
       <TabsTrigger className='font-Inter font-bold' value="account">New ad</TabsTrigger>
@@ -160,7 +164,8 @@ return (
                   {
                       activeDialog === 'headline'? <AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setHeading(response)} content={heading}/>: 
                       activeDialog === 'description'?<AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setDescription(response)} content={description}/> :
-                      activeDialog === 'poster-text'?<InitializePosterText type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} /> : ""
+                      activeDialog === 'poster-text'?<InitializePosterText type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} /> :
+                      activeDialog === 'choose category'?<Drafts /> : ""
                      
                   }
                   
@@ -195,28 +200,24 @@ return (
             </Card>
 
             <Card className='mb-3 rounded-sm'>
-              <CardContent className='px-3 py-2'>
+              <CardContent className='p-2'>
               <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-sm mb-[0.13rem]' ><span>Ad optimization</span></label>
                 <CardDescription className='text-xs py-1'>
                   Set up your ad for better search filtering.
                 </CardDescription>
-
-                <div className="rounded-sm p-3 border">
-                    <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>#Hashtags</span></label>    
-                    <textarea name="" id="" placeholder='type here...' className=' "flex rounded-md border border-slate-200 w-full bg-transparent px-3 py-1 mt-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-slate-950 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:file:text-slate-50 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"' rows="3"></textarea>
-                </div>
                 
-                <div className="rounded-sm mt-2 p-3 border">
-                  <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>Category</span></label>    
+                <div className="rounded-sm min-h-16 mt-2 p-2 border">
+                  <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-xs mb-[0.13rem]' ><span>...</span></label>    
                   <div className="relative">
-                    <Button variant='outline' className='mt-1 p-3' size='sm' onClick={categoryTrigger} >
-                    <span>select categories</span>
-                    <Plus className='ml-1 w-4 h-4' />
-                    </Button>
                   </div>
                 </div>
-              </CardContent>
-              
+                <AlertDialogTrigger asChild >
+                  <Button variant='outline' className='mt-2 border-gray-300 p-3' size='sm' onClick={(e)=>{setActiveDialog('choose category')}} >
+                    <Plus className='ml-1 w-4 h-4' />
+                    <span>select categories</span>
+                  </Button>
+                </AlertDialogTrigger>
+              </CardContent>              
             </Card>
 
             <Card className='mb-3 rounded-sm'>
@@ -233,71 +234,34 @@ return (
                       <Separator/>
                       <label htmlFor="" className=' ml-1 p-1 mt-3 items-center flex justify-between font-semibold text-xs' ><span>poster style</span></label>                               
                       <div>
-                      
-
-
-                    
-                            <ScrollArea className='whitespace-nowrap overflow-x-scroll'>
-                              <div className="flex mb-1 w-max gap-2">
-                                {designs.map((design,index) =>(
-                                  <div key={index} className='w-fit' onClick={()=>{setPosterStyle(designs[index]),console.log(index,designs[index])}}>
-                                    <Card className={posterStyle.src==design.src?'mx-1 overflow-clip  w-36 h-24 border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-36 h-24'} >
-                                      <Image alt={`format${index}`} src={design.src} className='scale-[1.07] relative  h-full w-full'/>
-                                    </Card>
-                                    <p className="text-center text-xs my-1">poster {index+1}</p>
-                                  </div>
-                                ))}
+                                      
+                        <ScrollArea className='whitespace-nowrap overflow-x-scroll'>
+                          <div className="flex mb-1 w-max gap-2">
+                            {designs.map((design,index) =>(
+                              <div key={index} className='w-fit' onClick={()=>{setPosterStyle(designs[index]),console.log(index,designs[index])}}>
+                                <Card className={posterStyle.src==design.src?'mx-1 overflow-clip  w-36 h-24 border-2 border-violet-700':'mx-1 overflow-clip border-2 border-gray-200  w-36 h-24'} >
+                                  <Image alt={`format${index}`} src={design.src} className='scale-[1.07] relative  h-full w-full'/>
+                                </Card>
+                                <p className="text-center text-xs my-1">poster {index+1}</p>
                               </div>
-                              <ScrollBar orientation='horizontal'/>
-                            </ScrollArea>
-                          <div className="mt-2 ml-1">
-                              <label htmlFor="" className=' ml-[2px] items-center flex justify-between font-semibold text-xs' ><span>background</span></label>
-                              <div className="border px-3 mt-1 py-1 rounded">
-                                  
-                                  {/* {color? <div className="flex mb-3 justify-between items-center"> 
-                                      <span className='text-xs'> color</span>                                           
-                                      <div className={ `p-1 shadow-md justify-center items-center inline-flex cursor-pointer` } onClick={()=>setPickState(!pickState) }>
-                                        <Button disabled={colorGradient==true} className={ `w-6 h-3 inline-block rounded-sm bg-[slateblue]` } />
-                                      </div>
-                                  </div>:''}                                                                                
-                                
-                                  {gradient?<div >
-                                    <div className='flex justify-between max-h-min items-center'>
-                                      <p className="inline-block text-xs">color gradient</p>
-                                      <div>
-                                          <Switch checked={colorGradient==true} onCheckedChange={()=>setColorGradient(!colorGradient)} />
-                                      </div>
-                                    </div>                
-                                    <div className={colorGradient?"grid mt-2 ml-2 grid-rows-[1fr] transition-collapse":"grid mt-2 ml-2 grid-rows-[0fr] transition-collapse"}>
-                                      <div className="overflow-hidden">
-                                        
-                                        <div className="flex mb-3 justify-between items-center">
-                                          <AlertDialogTrigger asChild>
-                                            <Button size='sm' variant='outline' className='p-1 h-fit inline-flex rounded-sm items-center' >gradient style<ArrowUpLeftIcon className='h-2 w-3'/><ArrowDownRightIcon className='h-2 w-3'/></Button>
-                                          </AlertDialogTrigger>    
-                                        </div>
-                                      </div>                                            
-                                    </div>                                        
-                                  </div>:''}
-
-                                  {bg_img?<div className="mb-2 mt-2 flex justify-between items-center">
-                                    <input type="file" name="image" onChange={(e)=>setBgImage(e.target.files[0])} hidden id="bg-image" />  
-                                    <Button size='sm' onClick={bgImageTrigger} className='py-1 pl-2 pr-1 h-fit inline-flex rounded-sm items-center' variant='outline'>use image<ImageIcon className='w-4 h-2 '/></Button>
-                                    <GearIcon className='w-6 h-6 text-black'/>
-                                  </div> :'' } */}
-                              </div>
+                            ))}
                           </div>
+                          <ScrollBar orientation='horizontal'/>
+                        </ScrollArea>
+                        <div className="mt-2">
+                            <label htmlFor="" className=' ml-[2px] items-center flex justify-between font-semibold text-xs' ><span>background</span></label>
+                            <div className="border px-2 mt-1 py-1 rounded">
+                                
+                              {
+                                isClient && posterStyle == designs[0] || posterStyle == designs[3]?
+                                <BackgroundBox colorDiv gradient bgImg/> : ""
+                              }  
+                                
+                            </div>
+                        </div>
                         <div className=' mt-2 relative'>
-
                           <div className="mt-1">
-                            {/* <div className="p-1 flex items-center mb-1 justify-between gap-3">
-                              <p className="p-1 text-xs font-semibold">headline</p>
-                              <div className='flex gap-2 items-center'>
-                                {posterText.length<2?<Button onClick={()=>{posterText.length<2?setPosterText(prev => [...prev,{index:prev.length,value:'',bold:false,italics:false,underline:false,fontSize:[14],fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                                {posterText.length>0?<Button onClick={()=>{posterText.length>0?setPosterText(posterText.filter(textProp=>textProp.index && textProp.index==posterText.length-1)):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-                              </div>
-                            </div> */}
-                              {posterText && posterText.map((headline,index)=>(
+                              {posterText && posterText.map((poster_text,index)=>(
                                 <TextBox 
                                   key={index} 
                                   changeText={(e)=>{setPosterText( prev => { let newArray = [...prev]; newArray[index].value = e.target.    value ;return newArray}),console.log(posterText)}} 
@@ -315,38 +279,36 @@ return (
                                   value={posterText[index] && posterText[index].value}
                                   logo={posterText[index].logo}
                                   logoImageTrigger={(e)=>{posterText[index].logo?logoImageTrigger(e):''}}
-                                  modify={posterText[index].modify}/>  
-                                    
+                                  modify={posterText[index].modify}
+                                  text_terminator={(e)=>{setPosterText(posterText.filter(textObject=>posterText[index].index!==textObject.index))}}
+                                />                                      
                               ))}          
                           </div>
                     
                           <div className="mt-1">
-                            {/* <div className="p-1 flex items-center mb-1 justify-between gap-3">
-                              <p className="p-1 text-xs font-semibold">add image</p>
-                              <div className='flex gap-2 items-center'>
-                              {imageCount.length<2?<Button onClick={(e)=>{imageCount.length<2?openImageDialog(e):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Plus className='h-full w-full' /></Button>:''}
-                              {imageCount.length>=1?<Button onClick={()=>{imageCount.length>=1?(setImageCount(imageCount.filter(image=>image==`image${imageCount.length-1}`)),setImage(image.filter((img,i)=>i==image.length-1))):''}} variant="outline" className='p-0 w-6 h-6 rounded-[2px]' size="icon"><Minus className='h-full w-full'/></Button>:''}
-                              </div>
-                                
-                            </div> */}
-                            <div>
-                              {image && image.map((image,index)=>(  
-                                <Image key={index} height={50} width={100} alt={`image${index}`} src={image} className='relative inline-block h-[100px] border rounded-sm mr-1'/>
+                            <div className='grid-cols-3 grid gap-1'>
+                              {image && image.map((image_,index)=>( 
+                                <div key={index} className='border inline-flex rounded w-fit h-fit flex-col'>
+                                  <p className="py-1 w-full flex justify-end"><XIcon className='w-4 scale-110 h-4 mr-3' onClick={(e)=>{setImage(image.filter((img)=>image[index]!==img))}}/>
+                                  </p>
+                                  <Image 
+                                    height={50} 
+                                    width={88} 
+                                    alt={`image${index}`} 
+                                    src={image_} 
+                                    className='relative inline-block h-[100px] border rounded'
+                                  />
+                                </div> 
                               ))} 
                             </div>        
                           </div> 
-                          <p className="mt-2 px-1 font-Inter flex gap-2">
-                            <AlertDialogTrigger asChild><Button size='sm' disabled={posterText>=9} onClick={(e)=>{setActiveDialog('poster-text')}} className='flex-grow px-1'><Text /> add text</Button></AlertDialogTrigger>
-                            <AlertDialogTrigger asChild><Button size='sm' onClick={(e)=>{image.length<3?openImageDialog(e):''}} className='flex-grow px-1'><ImageIcon/> add image</Button></AlertDialogTrigger>
+                          <p className="mt-4 font-Inter flex gap-2">
+                            <AlertDialogTrigger asChild><Button size='sm' disabled={posterText.length>=9} onClick={(e)=>{setActiveDialog('poster-text')}} className='flex-grow px-1'><Text /> add text</Button></AlertDialogTrigger>
+                            <AlertDialogTrigger asChild><Button  disabled={image.length>=3} size='sm' onClick={(e)=>{image.length<3?openImageDialog(e):''}} className='flex-grow px-1'><ImageIcon/> add image</Button></AlertDialogTrigger>
                             <input type="file" name="next-image" onChange={addImage} hidden id="next-image" />
                             <input type="file" name="next-image" onChange={addLogoImage} hidden id="logo-image" />
                           </p>
-
                         </div>
-                          
-                        
-
-
                       </div>  
 
                     </div>
@@ -429,8 +391,9 @@ export default NewAd
 
 
 
-const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, changeColor,changeColor2, changeColor3,setFamily,gradValue,type, logo, modify, label, placeholder,logoImageTrigger}) => {
+const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, text_terminator,changeColor,changeColor2, changeColor3,setFamily,gradValue,type, logo, modify, label, placeholder,logoImageTrigger}) => {
 
+  //UI
   const [activeDialog, setActiveDialog]= useState('')
 
   //FONT
@@ -455,10 +418,6 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, ch
     underline:false,
     gradient:gradient,
   })  
-
-  
-
- 
   
   return (
       <div className="rounded-md text-sm border mb-3 border-gray-200 overflow-clip">
@@ -564,7 +523,7 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, ch
           </AlertDialogContent>
         <div className="flex justify-between ml-1 items-center mb-[0.13rem] p-1">
           {label && <><label htmlFor="" className='relative items-center inline-flex justify-between font-semibold text-xs' ><span>{label}</span></label></> }
-          <XIcon className='w-4 h-4 mr-r' />
+          <XIcon className='w-4 scale-150 h-4 mr-3' onClick={text_terminator}/>
         </div>
         <Separator/>
         <div className="flex justify-between px-2 py-1 items-center h-7">
@@ -589,10 +548,93 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, ch
   )
 }
 
-const ImageBox = () => {
+const BackgroundBox = ({colorDiv, gradient, bgImg, bgImageTrigger}) => {
+
+  //UI
+  const [activeDialog, setActiveDialog]= useState('')
+  const [colorGradient, setColorGradient] = useState(false)
+  const [addImage, setAddImage] = useState(false)
+  const [thirdBgGradient, setThirdBgGradient] = useState(false)
+
+  //DATA
+  const [color, setColor] = useColor("salmon")
+
   return (
-    <div>
-      hello world
+    <div className='mt-1'>
+      <AlertDialog>
+          <AlertDialogContent className='rounded-md max-w-[80vw] gap-0 p-2'>
+          <AlertDialogTitle className='h-0 '><AlertDialogDescription></AlertDialogDescription></AlertDialogTitle>
+            <p className="p-1 h-fit flex justify-between items-center">
+              <span className='font-bold text-xs'>{activeDialog}</span>
+              <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
+            </p>
+            {
+              activeDialog === 'background-color'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} /></div> :             
+              activeDialog === 'background gradient 1'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} /></div> :             
+              activeDialog === 'background gradient 2'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} /></div> :             
+              activeDialog === 'background gradient 3'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} /></div> :  
+              activeDialog === 'gradient settings'? <GradientSettings /> :  ""   
+            }
+            <AlertDialogDescription/>
+          </AlertDialogContent>
+
+
+
+
+
+     {colorDiv? <div className="flex mb-3 justify-between items-center"> 
+            <span className='text-xs pl-[2px]'>color</span>                                           
+            <AlertDialogTrigger asChild><Button disabled={colorGradient==true} onClick={()=>{setActiveDialog('background-color'), setColorGradient(false)}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>       
+      </div>:''}                                                                                
+      
+        {gradient?<div >
+          <div className='flex justify-between max-h-min items-center'>
+            <p className="inline-block pl-[2px] text-xs">color gradient</p>
+            <div>
+                <Switch checked={colorGradient==true} onCheckedChange={()=>{addImage && setAddImage(false),setColorGradient(!colorGradient)}} />
+            </div>
+          </div>                
+          <div className={colorGradient?"grid mt-2 grid-rows-[1fr] transition-collapse":"grid mt-2 grid-rows-[0fr] transition-collapse"}>
+            <div className="overflow-hidden">
+              
+              <div className="flex mb-3 justify-between items-center">
+                <div className='flex items-center gap-2'>
+                  <AlertDialogTrigger asChild><Button disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 1')}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>
+                  <AlertDialogTrigger asChild><Button disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 2')}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>
+                  {thirdBgGradient?<AlertDialogTrigger asChild><Button disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 3')}} className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>:""}
+                  <Button onClick={()=>setThirdBgGradient(!thirdBgGradient)} variant="outline" className='p-0 w-6 h-6' size="icon">{!thirdBgGradient?<Plus className='h-full w-full' />:<Minus className='h-full w-full'/>}</Button>
+                </div>
+                <AlertDialogTrigger asChild>
+                  <Button size='sm' variant='ghost' onClick={()=>{setActiveDialog('gradient settings')}} className='px-1 py-[2px] mr-2 h-fit inline-flex rounded-sm items-center' ><GearIcon className='w-6 h-6 scale-110 text-black'/></Button>
+                </AlertDialogTrigger>    
+              </div>
+            </div>                                            
+          </div>                                        
+        </div>:''}
+
+        {bgImg? <div>
+          <div className="mb-2 mt-1 flex justify-between items-center">
+            <p className="inline-block pl-[2px] text-xs">use image</p>        
+            <div>
+                <Switch checked={addImage==true} onCheckedChange={()=>{colorGradient && setColorGradient(false),setAddImage(!addImage)}} />
+            </div>
+          </div>
+          <div className={addImage?"grid mt-2 grid-rows-[1fr] transition-collapse":"grid mt-2 grid-rows-[0fr] transition-collapse"}>
+            <div className="overflow-hidden">
+              
+              <div className="flex mb-3 justify-between items-center">
+                <div className='flex items-center gap-2'>
+                  <input type="file" name="image" onChange={(e)=>setBgImage(e.target.files[0])} hidden id="bg-image" />  
+                  <Button size='sm' onClick={bgImageTrigger} className='py-1 px-3 pr-1 h-fit text-gray-400 border-gray-400 inline-flex rounded-[3px] items-center' variant='outline'><span className='-top-[2px] relative'>add image</span><ImageIcon className='w-4 h-2 '/></Button>
+                </div>
+                <AlertDialogTrigger asChild>
+                  <Button size='sm' variant='ghost' className='px-1 py-[2px] mr-2 h-fit inline-flex rounded-sm items-center' ><GearIcon className='w-6 h-6 scale-110 text-black'/></Button>
+                </AlertDialogTrigger>    
+              </div>
+            </div>                                            
+          </div>
+        </div> :'' }
+      </AlertDialog>
     </div>
   )
 }
@@ -689,6 +731,28 @@ const InitializePosterText = ({type,i}) => {
 }
 
 
+const Category = () => {
+  return (
+    <div>
+      hello world
+    </div>
+  )
+}
+const GradientSettings = () => {
+  const [icons, setIcons]=useState([{type:ArrowLeft},{type:ArrowUp},{type:ArrowDown},{type:ArrowRight},{type:ArrowUpLeftIcon},{type:ArrowDownLeft},{type:ArrowDownRightIcon},{type:ArrowUpRight}])
+
+  return (
+    <div className='flex justify-start items-center flex-col'>
+      <div className="border-2 rounded-md h-20 bg-gradient-to-r from-gradient1 to-gradient2 w-36"></div>
+      <h4 className="mb-1 mt-3 mx-2 text-[0.7rem] font-semibold leading-none">gradient direction</h4>
+      <div className=" w-[75%] mt-2 grid gap-2 grid-cols-4">
+        {icons.map((arrow,index)=>(
+          <arrow.type key={index} className='h-6 w-6 border p-[2px]' onClick={()=>{}}/>
+        ))}
+      </div>
+    </div>
+  )
+}
 const Drafts = () => {
   return (
     <div>
