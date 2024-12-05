@@ -15,25 +15,26 @@ import { Separator } from "@/components/ui/separator"
 import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
 import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Home, FileBox, Brush, HardDrive } from 'lucide-react'
+import { usePathname } from "next/navigation";
 
 
 const Ads = () => {
-    const [activeMenu, setActiveMenu] = useState('yourads') 
+  // const path = usePathname()
+  // const [activeMenu, setActiveMenu] = useState('')
+  // let split = path.split('/')
+  // const commonTitle = items.map(item=>item.title.toLowerCase())
+  
+  // useEffect(()=>{
+  //    let Heading = commonTitle.filter(value => split.includes(value))
+  //    setActiveMenu(Heading[Heading.length-1])
+  // },[path])  
 
-   
   return (
     <div className="overflow-x-clip flex w-full h-full flex-col font-Inter gap-2 pb-1">
       Dashboard
     
         
-      <footer className="bottom-0 py-2 z-30 bg-white absolute w-full border-t border-gray-200">
-          <div className="p-1 relative flex justify-evenly gap-5 items-center">
-              <Link href={'/ads'} className='p-1 bg-gray-200 rounded-sm decoration-none'><Home className='text-black  bg-gray-200 w-5 h-5 '/></Link>
-              <Link href={'/ads/search'} className='p-1 decoration-none'><Search className='text-black w-5 h-5'/></Link>
-              <Link href={'/ads/graphics'} className='p-1 decoration-none'><Brush className='text-black w-5 h-5'/></Link>
-              <Link href={'#'} className='p-1 decoration-none'><HardDrive className='text-black w-5 h-5'/></Link>
-          </div>
-      </footer>
+      
     </div>
   )
 }

@@ -29,7 +29,7 @@ const Login = () => {
                 </p>
                 <Link className='text-gray-500 text-[0.73rem]' href={'/makeup'}>forgot details?<span></span></Link>
               </div>    
-              <Button className="text-sm font-semibold w-full p rounded-[0.2rem]" >Sign in</Button>  
+              <Link href={'/ads'}  className="decoration-none text-primary"><Button className="text-sm font-semibold w-full p rounded-[0.2rem]" >Sign in(view)</Button></Link>
               <p className="w-full pl-1 mt-1"><Link className="text-gray-400 text-[0.73rem] decoration-none" href={'/signup'}>not signed?  <span className="text-gray-900 text-xs">  Create account</span></Link></p>
               <div className="items-center mt-5 relative w-full px-2 after:absolute after:border-b after:w-2/5 after:right-0 after:border-gray-400 after:my-0 before:absolute before:border-b before:w-2/5 before:left-0 before:border-gray-400 before:my-0 flex justify-center"><span className="text-gray-500 relative -top-[2px] text-xs">or</span></div>
               <Button className="text-sm mt-4 font-medium w-full text-gray-500 border-gray-400 rounded-[0.2rem]" variant='outline' >continue with {google}</Button> 
