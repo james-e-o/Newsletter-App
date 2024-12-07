@@ -73,6 +73,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         const [bgData, setBgData] = useState(bgFormat)
         const [logoImage, setLogoImage] = useState()
         const [posterText, setPosterText] = useState([])
+        const [posterCount, setPosterCount] = useState({logo:0,headline:0,banner:0,button:0,subtext:0})
         const [image, setImage] = useState([])
         const [posterStyle, setPosterStyle] = useState(designs[0])
         const [categories, setCategories] = useState(['cooking', 'reading'])
@@ -119,7 +120,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         }
         function bgImageTrigger(e){
           e.preventDefault()
-          const logoInput = document.getElementById('logo-image')
+          const logoInput = document.getElementById('bg-image')
           logoInput.click()
         }
       
@@ -139,6 +140,14 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           }
           reader.readAsDataURL(img) 
         }
+        function addBgImage({target}){
+          const img = target.files[0]
+          let reader = new FileReader()
+          reader.onload=({target})=>{
+            setBgData(prev=> ({...prev,image:target.result}))
+          }
+          reader.readAsDataURL(img) 
+        }
 
         useEffect(()=>{
           setIsClient(true)
@@ -146,7 +155,8 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         },[])
         useEffect(()=>{
          console.log(bgData)
-        },[bgData])
+         console.log(posterCount)
+        },[bgData,posterCount])
 
 return (
       <Tabs defaultValue="account" className="w-full relative h-full flex flex-col ">
@@ -173,7 +183,7 @@ return (
                     {
                         activeDialog === 'headline'? <AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setHeading(response)} content={heading}/>: 
                         activeDialog === 'description'?<AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setDescription(response)} content={description}/> :
-                        activeDialog === 'poster-text'?<InitializePosterText type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} /> :
+                        activeDialog === 'poster-text'?<InitializePosterText  count={(val)=>{setPosterCount(prev =>({...prev,[val]:posterCount[val]++}))}} type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} countData={posterCount}/> :
                         activeDialog === 'choose category'?<Drafts /> : ""
                       
                     }
@@ -269,6 +279,7 @@ return (
                                     gradient 
                                     bgImg
                                     //DATA
+                                    bgImageTrigger={(e)=>{bgImageTrigger(e)}}
                                     colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
                                     changeBg={(col)=>{setBgData(prev=> ({...prev,color:col.hex}))}}
                                     changeGrad1={(col)=>{setBgData(prev=> ({...prev,grad1:col.hex}))}}
@@ -302,7 +313,7 @@ return (
                                     logo={posterText[index].logo}
                                     logoImageTrigger={(e)=>{posterText[index].logo?logoImageTrigger(e):''}}
                                     modify={posterText[index].modify}
-                                    text_terminator={(e)=>{setPosterText(posterText.filter(textObject=>posterText[index].index!==textObject.index))}}
+                                    text_terminator={(e)=>{setPosterText(posterText.filter(textObject=>posterText[index].index!==textObject.index)),setPosterCount(prev=>({...prev,[posterText[index].type]:posterCount[posterText[index].type]--}))}}
                                   />                                      
                                 ))}          
                             </div>
@@ -328,7 +339,8 @@ return (
                               <AlertDialogTrigger asChild><Button size='sm' disabled={posterText.length>=9} onClick={(e)=>{setActiveDialog('poster-text')}} className='flex-grow px-1'><Text /> add text</Button></AlertDialogTrigger>
                               <AlertDialogTrigger asChild><p disabled={image.length>=3} size='sm' onClick={(e)=>{image.length<3?openImageDialog(e):''}} className='flex-grow items-center text-white bg-primary rounded-md text-xs flex justify-center gap-2 px-2'><ImageIcon className='h-4 w-4'/> add image</p></AlertDialogTrigger>
                               <input type="file" name="next-image" onChange={addImage} hidden id="next-image" />
-                              <input type="file" name="next-image" onChange={addLogoImage} hidden id="logo-image" />
+                              <input type="file" name="logo-image" onChange={addLogoImage} hidden id="logo-image" />
+                              <input type="file" name="bg-image" onChange={addBgImage} hidden id="bg-image" />
                             </div>
                           </div>
                         </div>  
@@ -597,7 +609,7 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg, bgImageTrigger
               activeDialog === 'background gradient 1'? <div className="p-1"><ColorPicker color={grad1} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad1} onChangeComplete={(col)=>{changeGrad1(col)}}/></div> :             
               activeDialog === 'background gradient 2'? <div className="p-1"><ColorPicker color={grad2} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad2} onChangeComplete={(col)=>{changeGrad2(col)}}/></div> :             
               activeDialog === 'background gradient 3'? <div className="p-1"><ColorPicker color={grad3} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad3} onChangeComplete={(col)=>{changeGrad3(col,thirdBgGradient)}}/></div> :  
-              activeDialog === 'gradient settings'? <GradientSettings dir={gradientDir}/> :  ""   
+              activeDialog === 'gradient settings'? <GradientSettings dir={gradientDir} data={data}/> :  ""   
             }
             <AlertDialogDescription/>
           </AlertDialogContent>
@@ -681,15 +693,15 @@ const AiBox = ({result,content,useModification,reModify}) => {
   )
 }
 
-const InitializePosterText = ({type,count}) => {
+const InitializePosterText = ({count,countData,type}) => {
   return (
     <div>
       <p className="mb-1 mr-1 font-bold text-xs">select text type</p>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,true)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button disabled={countData.logo>=1} onClick={({target})=>{type(target.textContent,[14],false,true),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
     </div>
   )
 }
@@ -702,7 +714,7 @@ const Category = () => {
     </div>
   )
 }
-const GradientSettings = ({dir}) => {
+const GradientSettings = ({dir,data}) => {
   
   const [activeArrow, setActiveArrow]=useState(arrows[3])
 
@@ -711,7 +723,7 @@ const GradientSettings = ({dir}) => {
   // },[])
   return (
     <div className='flex justify-start items-center flex-col'>
-      <div className="border-2 rounded-md h-20 bg-gradient-to-r from-gradient1 to-gradient2 w-44"></div>
+      <div style={{background:`linear-gradient(${data.gradDirection})`}} className="border-2 rounded-md aspect-video bg-gradient-to-r from-gradient1 to-gradient2 w-5/6"></div>
       <h4 className="mb-1 mt-3 mx-2 text-[0.7rem] font-semibold leading-none">gradient direction</h4>
       <div className=" w-[75%] mt-1 grid gap-3 justify-items-center grid-cols-4">
         {arrows&&arrows.map((arrow,index)=>(
