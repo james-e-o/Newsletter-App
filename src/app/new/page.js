@@ -19,7 +19,7 @@ import { Badge, badgeVariant } from '@/components/ui/badge'
 import { Switch } from "@/components/ui/switch"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
-import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush,Bold, Italic, Underline, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon, Minus, Text } from 'lucide-react'
+import { ArrowLeft, PictureInPicture, XIcon, ChevronsUpDown, Plus, X, Search, Brush,Bold, Italic, Underline, ImageIcon, ArrowDown, ArrowUp, ArrowLeftIcon, ArrowRight, ArrowUpLeftIcon, ArrowDownLeft, ArrowUpRight, ArrowDownRightIcon, LetterTextIcon, Minus, Text, Radio, Target, Cone } from 'lucide-react'
 import { GearIcon } from '@radix-ui/react-icons'
 import { designData } from './layout'
 
@@ -33,22 +33,26 @@ import format6 from '../../../public/format 6.png'
 
 
 
-const bgFormat = {
-  gradient:'',
-  image:'',
-  imageProp:'',
-  color:'',
-  grad1:'',
-  grad2:'',
-  grad3:'',
-  gradDirection:``,
-}
 const designs =[
   {src:format1,type:'hello world'}, {src:format2,type:'hello world'}, {src:format3,type:'hello world'}, {src:format4,type:'hello world'}, {src:format5,type:'hello world'}, {src:format6,type:'hello world'},]
-const arrows = [{type:ArrowLeft,css:`to left,`},{type:ArrowUp,css:`to top,`},{type:ArrowDown,css:`to bottom,`},{type:ArrowRight,css:`to right,`},{type:ArrowUpLeftIcon,css:`to top left,`},{type:ArrowDownLeft,css:`to bottom left,`},       {type:ArrowDownRightIcon,css:`to bottom right,`},{type:ArrowUpRight,css:`to top right,`}]
-const fontFamilies = [
-  'Inter', 'Madetommy','Voces', 'Clash'
-]
+  const arrows = [{type:ArrowLeft,css:`to left,`},{type:ArrowUp,css:`to top,`},{type:ArrowDown,css:`to bottom,`},{type:ArrowRight,css:`to right,`},{type:ArrowUpLeftIcon,css:`to top left,`},{type:ArrowDownLeft,css:`to bottom left,`},       {type:ArrowDownRightIcon,css:`to bottom right,`},{type:ArrowUpRight,css:`to top right,`}]
+  const fontFamilies = [
+    'Inter', 'Madetommy','Voces', 'Clash'
+  ]
+  const gradientTypes = [
+    `linear-gradient`, `conic-gradient`,`radial-gradient`
+  ]
+  const bgFormat = {
+    gradientType:``,
+    gradient:'',
+    image:'',
+    imageProp:'',
+    color:'black',
+    grad1:'black',
+    grad2:'black',
+    grad3:'black',
+    gradDirection:`${gradientTypes[0]}(${arrows[3].css} black,black)`
+  }
 
 // function FormData(value,{color,fontSize,fontFamily,fontStyle}){
 //   this.value = value
@@ -152,11 +156,17 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         useEffect(()=>{
           setIsClient(true)
           setPosterStyle(designs[0])
+          setBgData(prev => ({...prev,gradientType:gradientTypes[0]}))
         },[])
         useEffect(()=>{
          console.log(bgData)
-         console.log(posterCount)
-        },[bgData,posterCount])
+        },[bgData])
+        useEffect(()=>{
+         if (posterStyle==designs[4]){
+          setBgData(prev => ({...prev,gradientType:gradientTypes[1]}))
+          setBgData(prev => ({...prev,gradDirection:`${gradientTypes[1]}(at 50% 50%, black,black)`}))
+         }
+        },[posterStyle])
 
 return (
       <Tabs defaultValue="account" className="w-full relative h-full flex flex-col ">
@@ -272,22 +282,56 @@ return (
                               <div className="border px-2 mt-1 py-1 rounded">
                                   
                                 {
-                                  isClient?
-                                  <BackgroundBox 
+                                  isClient&&(
+                                    posterStyle == designs[5] ?
+                                    <Drafts /> :
+
+                                    posterStyle == designs[4] ?
+                                    <BackgroundBox 
+                                    //UI
+                                    gradient 
+                                    thirdgrad
+                                    style={posterStyle}
+                                    //DATA
+                                    type={(val)=>{setBgData(prev=>({...prev, gradientType:val}))}}
+                                    bgImageTrigger={(e)=>{bgImageTrigger(e)}}
+                                    colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
+                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
+                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
+                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
+                                    gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3}`}))}}
+                                    data={bgData}
+                                    />  :
+
+                                    posterStyle == designs[1] || posterStyle == designs[2]?
+                                    <BackgroundBox 
+                                    //UI
+                                    colorDiv 
+                                    bgImg
+                                    style={posterStyle}
+                                    //DATA
+                                    bgImageTrigger={(e)=>{bgImageTrigger(e)}}
+                                    changeBg={(col)=>{setBgData(prev=> ({...prev,color:col.hex}))}}
+                                    data={bgData}
+                                    />  :
+
+                                    <BackgroundBox 
                                     //UI
                                     colorDiv 
                                     gradient 
                                     bgImg
+                                    style={posterStyle}
                                     //DATA
                                     bgImageTrigger={(e)=>{bgImageTrigger(e)}}
                                     colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
                                     changeBg={(col)=>{setBgData(prev=> ({...prev,color:col.hex}))}}
-                                    changeGrad1={(col)=>{setBgData(prev=> ({...prev,grad1:col.hex}))}}
-                                    changeGrad2={(col)=>{setBgData(prev=> ({...prev,grad2:col.hex}))}}
-                                    changeGrad3={(col,bool)=>{setBgData(prev=> ({...prev,grad3:col.hex?col.hex:bool}))}}
-                                    gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${dir} ${prev.grad1&&prev.grad1}, ${prev.grad2&&prev.grad2}, ${prev.grad3&&prev.grad3}`}))}}
+                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
                                     data={bgData}
-                                    /> : ""
+                                    /> 
+                                  )
                                 }  
                                   
                               </div>
@@ -581,19 +625,19 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, te
   )
 }
 
-const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg, bgImageTrigger, gradientDir, changeBg,changeGrad1,changeGrad2,changeGrad3,data}) => {
+const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg,style,type, bgImageTrigger, gradientDir,thirdgrad, changeBg,changeGrad1,changeGrad2,changeGrad3,data}) => {
 
   //UI
   const [activeDialog, setActiveDialog]= useState('')
   const [colorGradient, setColorGradient] = useState(false)
   const [addImage, setAddImage] = useState(false)
-  const [thirdBgGradient, setThirdBgGradient] = useState(false)
 
   //DATA
   const [color, setColor] = useColor("black")
   const [grad1, setGrad1] = useColor("black")
   const [grad2, setGrad2] = useColor("black")
   const [grad3, setGrad3] = useColor("black")
+  const [activedir, setActivedir] = useState(arrows[3].css)
 
   return (
     <div className='mt-1'>
@@ -606,10 +650,10 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg, bgImageTrigger
             </p>
             {
               activeDialog === 'background-color'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} onChangeComplete={(col)=>{changeBg(col)}}/></div> :             
-              activeDialog === 'background gradient 1'? <div className="p-1"><ColorPicker color={grad1} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad1} onChangeComplete={(col)=>{changeGrad1(col)}}/></div> :             
-              activeDialog === 'background gradient 2'? <div className="p-1"><ColorPicker color={grad2} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad2} onChangeComplete={(col)=>{changeGrad2(col)}}/></div> :             
-              activeDialog === 'background gradient 3'? <div className="p-1"><ColorPicker color={grad3} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad3} onChangeComplete={(col)=>{changeGrad3(col,thirdBgGradient)}}/></div> :  
-              activeDialog === 'gradient settings'? <GradientSettings dir={gradientDir} data={data}/> :  ""   
+              activeDialog === 'background gradient 1'? <div className="p-1"><ColorPicker color={grad1} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad1} onChangeComplete={(col)=>{changeGrad1(col,activedir)}}/></div> :             
+              activeDialog === 'background gradient 2'? <div className="p-1"><ColorPicker color={grad2} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad2} onChangeComplete={(col)=>{changeGrad2(col,activedir)}}/></div> :             
+              activeDialog === 'background gradient 3'? <div className="p-1"><ColorPicker color={grad3} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad3} onChangeComplete={(col)=>{changeGrad3(col,activedir)}}/></div> :  
+              activeDialog === 'gradient settings'? <GradientSettings type={type} style={style} dir={(value)=>{gradientDir(value),setActivedir(value)}} data={data}/> :  ""   
             }
             <AlertDialogDescription/>
           </AlertDialogContent>
@@ -634,8 +678,7 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg, bgImageTrigger
                 <div className='flex items-center gap-2'>
                   <AlertDialogTrigger asChild><Button style={{backgroundColor:grad1.hex}} disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 1')}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>
                   <AlertDialogTrigger asChild><Button style={{backgroundColor:grad2.hex}} disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 2')}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>
-                  {thirdBgGradient?<AlertDialogTrigger asChild><Button style={{backgroundColor:grad3.hex}} disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 3')}} className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>:""}
-                  <Button onClick={()=>{setThirdBgGradient(!thirdBgGradient)}} variant="outline" className='p-0 w-6 h-6' size="icon">{!thirdBgGradient?<Plus onClick={()=>changeGrad3(grad3,thirdBgGradient)} className='h-full w-full' />:<Minus onClick={()=>changeGrad3('',thirdBgGradient)} className='h-full w-full'/>}</Button>
+                  {thirdgrad?<AlertDialogTrigger asChild><Button style={{backgroundColor:grad3.hex}} disabled={colorGradient==false} onClick={()=>{setActiveDialog('background gradient 3')}} className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>:""}
                 </div>
                 <AlertDialogTrigger asChild>
                   <Button size='sm' variant='ghost' onClick={()=>{setActiveDialog('gradient settings')}} className='px-1 py-[2px] mr-2 h-fit inline-flex rounded-sm items-center' ><GearIcon className='w-6 h-6 scale-110 text-black'/></Button>
@@ -649,7 +692,7 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg, bgImageTrigger
           <div className="mb-2 mt-1 flex justify-between items-center">
             <p className="inline-block pl-[2px] text-xs">use image</p>        
             <div>
-                <Switch checked={addImage==true} onCheckedChange={()=>{colorGradient && setColorGradient(false),setAddImage(!addImage),colorgradient(colorGradient)}} />
+                <Switch checked={addImage==true} onCheckedChange={()=>{colorGradient && setColorGradient(false),setAddImage(!addImage),colorgradient&&colorgradient(colorGradient)}} />
             </div>
           </div>
           <div className={addImage?"grid mt-2 grid-rows-[1fr] transition-collapse":"grid mt-2 grid-rows-[0fr] transition-collapse"}>
@@ -714,22 +757,44 @@ const Category = () => {
     </div>
   )
 }
-const GradientSettings = ({dir,data}) => {
+const GradientSettings = ({dir,data,style,type}) => {
   
   const [activeArrow, setActiveArrow]=useState(arrows[3])
+  const [y, setY]=useState('50%')
+  const [x, setX]=useState('50%')
+  const [position, setPosition]=useState(`at ${x} ${y}`)
+  let styleCLassName = "px-2 flex gap-2 py-1 justify-center items-center border rounded-sm mt-3 text-xs font-semibold"
 
-  // useEffect(()=>{
-  //   setActiveArrow(arrows[3])
-  // },[])
+  useEffect(()=>{
+    setActiveArrow(arrows[3])
+  },[])
   return (
-    <div className='flex justify-start items-center flex-col'>
-      <div style={{background:`linear-gradient(${data.gradDirection})`}} className="border-2 rounded-md aspect-video bg-gradient-to-r from-gradient1 to-gradient2 w-5/6"></div>
-      <h4 className="mb-1 mt-3 mx-2 text-[0.7rem] font-semibold leading-none">gradient direction</h4>
+    <div className='flex justify-start font-Inter items-center flex-col'>
+      <div style={{background:`${data.gradDirection}`}} className="border-2 rounded-md aspect-video bg-gradient-to-r from-gradient1 to-gradient2 w-5/6"></div>
+      <h4 className="mb-1 mt-3 mx-2 text-[0.7rem] font-Inter font-semibold leading-none">gradient styling</h4>
+     {style==designs[4] ? <div className=" w-full mt-1 pb-1 flex gap-3 justify-between items-start">
+        <div className="p-1 ">
+          <p className="text-[0.7rem] text-center font-semibold">type</p>
+          <p className={data.gradientType==gradientTypes[2]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[2])}}><Target className=' p-1'/> Radial</p>
+          <p className={data.gradientType==gradientTypes[1]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[1])}}><Cone className=' p-1'/> Conic</p>
+        </div>
+        <div className="p-1">
+        <p className="text-[0.7rem] text-center  font-semibold pb-1">position</p>
+        <div className="grid grid-cols-2 gap-1 pb-2 mt-3 rotate-45 mr-5 grid-rows-2">
+          <ArrowUpLeftIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
+          <ArrowUpRight className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
+          <ArrowDownLeft className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
+          <ArrowDownRightIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
+        </div>
+        </div>
+      </div> : 
+      
       <div className=" w-[75%] mt-1 grid gap-3 justify-items-center grid-cols-4">
         {arrows&&arrows.map((arrow,index)=>(
           <arrow.type key={index} className={activeArrow.type==arrow.type?'mx-1 overflow-clip p-[2px] w-6 h-6 border-2 rounded-sm border-violet-700':'mx-1 overflow-clip p-[2px] border-2 rounded-sm border-gray-200  w-6 h-6'} onClick={(e)=>{setActiveArrow(arrows[index]),dir(arrows[index].css)}}/>
         ))}
       </div>
+      }
     </div>
   )
 }
