@@ -661,7 +661,7 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg,style,type, bgI
 
      {colorDiv? <div className="flex mb-4 justify-between items-center"> 
             <span className='text-xs pl-[2px]'>color</span>                                           
-            <AlertDialogTrigger asChild><Button style={{backgroundColor:color.hex}} disabled={colorGradient==true} onClick={()=>{setActiveDialog('background-color'), setColorGradient(false),colorgradient(colorGradient)}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>       
+            <AlertDialogTrigger asChild><Button style={{backgroundColor:color.hex}} disabled={colorGradient==true} onClick={()=>{setActiveDialog('background-color'), setColorGradient(false),colorgradient&&colorgradient(colorGradient)}}  className={`w-6 h-3 shadow-sm cursor-pointer disabled:opacity-45 inline-block rounded-sm]`} /></AlertDialogTrigger>       
       </div>:''}                                                                                
       
         {gradient?<div >
@@ -763,7 +763,7 @@ const GradientSettings = ({dir,data,style,type}) => {
   const [y, setY]=useState('50%')
   const [x, setX]=useState('50%')
   const [position, setPosition]=useState(`at ${x} ${y}`)
-  let styleCLassName = "px-2 flex gap-2 py-1 justify-center items-center border rounded-sm mt-3 text-xs font-semibold"
+  let styleCLassName = "px-3 flex gap-2 py-2 justify-center items-center border rounded-sm mt-3 text-sm font-semibold"
 
   useEffect(()=>{
     setActiveArrow(arrows[3])
@@ -781,10 +781,10 @@ const GradientSettings = ({dir,data,style,type}) => {
         <div className="p-1">
         <p className="text-[0.7rem] text-center  font-semibold pb-1">position</p>
         <div className="grid grid-cols-2 gap-1 pb-2 mt-3 rotate-45 mr-5 grid-rows-2">
-          <ArrowUpLeftIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
-          <ArrowUpRight className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
-          <ArrowDownLeft className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
-          <ArrowDownRightIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-8 h-8'} onClick={(e)=>{}}/>
+          <ArrowUpLeftIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
+          <ArrowUpRight className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
+          <ArrowDownLeft className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
+          <ArrowDownRightIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
         </div>
         </div>
       </div> : 
