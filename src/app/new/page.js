@@ -169,7 +169,7 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
         },[posterStyle])
 
 return (
-      <Tabs defaultValue="account" className="w-full relative h-full flex flex-col ">
+      <Tabs defaultValue="account" className="w-full relative h-full font-Inter flex flex-col ">
         <header className="px-2 pt-3 pb-1 justify-start flex">
             <Link href={'/'} className="decoration-none text-primary"><h1 className="font-Madetommy decoration-none text-primary text-xl">adFeed</h1></Link>    
         </header>
@@ -180,7 +180,7 @@ return (
           <TabsTrigger className='font-Inter font-bold' value="password">AI generate</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="account" className='overflow-y-scroll flex-col flex h-full my-2'>          
+        <TabsContent value="account" className='overflow-y-scroll flex-col font-Inter flex h-full my-2'>          
           <form action="" onSubmit={(e)=>e.preventDefault()} name='new-pub' className=''>             
             
               <Card className='mb-3 rounded-sm'>                  
@@ -296,10 +296,10 @@ return (
                                     type={(val)=>{setBgData(prev=>({...prev, gradientType:val}))}}
                                     bgImageTrigger={(e)=>{bgImageTrigger(e)}}
                                     colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
-                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
-                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
-                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2}`}))}}
-                                    gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3}`}))}}
+                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
+                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
+                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
+                                    gradientDir={({dir})=>{setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
                                     data={bgData}
                                     />  :
 
@@ -737,11 +737,14 @@ const AiBox = ({result,content,useModification,reModify}) => {
 }
 
 const InitializePosterText = ({count,countData,type}) => {
+
+  const [stateCount,setStateCount]=useState(countData)
+
   return (
     <div>
       <p className="mb-1 mr-1 font-bold text-xs">select text type</p>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button disabled={countData.logo>=1} onClick={({target})=>{type(target.textContent,[14],false,true),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button disabled={countData.logo>=1} onClick={({target})=>{if(countData.logo<1){type(target.textContent,[14],false,true),count(target.textContent)}else console.log(countData)}} className='rounded-2xl disabled:opacity-40 text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
@@ -775,8 +778,8 @@ const GradientSettings = ({dir,data,style,type}) => {
      {style==designs[4] ? <div className=" w-full mt-1 pb-1 flex gap-3 justify-between items-start">
         <div className="p-1 ">
           <p className="text-[0.7rem] text-center font-semibold">type</p>
-          <p className={data.gradientType==gradientTypes[2]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[2])}}><Target className=' p-1'/> Radial</p>
-          <p className={data.gradientType==gradientTypes[1]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[1])}}><Cone className=' p-1'/> Conic</p>
+          <p className={data.gradientType==gradientTypes[2]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[2]),dir(`at ${x} ${y},`)}}><Target className=' p-1'/> Radial</p>
+          <p className={data.gradientType==gradientTypes[1]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[1]),dir(`at ${x} ${y},`)}}><Cone className=' p-1'/> Conic</p>
         </div>
         <div className="p-1">
         <p className="text-[0.7rem] text-center  font-semibold pb-1">position</p>
