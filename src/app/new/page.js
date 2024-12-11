@@ -638,6 +638,11 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg,style,type, bgI
   const [grad2, setGrad2] = useColor("black")
   const [grad3, setGrad3] = useColor("black")
   const [activedir, setActivedir] = useState(arrows[3].css)
+  useEffect(()=>{
+    if(style == designs[4]){
+      setActivedir(`at 50% 50%,`)
+    }
+  },[style])
 
   return (
     <div className='mt-1'>
@@ -739,12 +744,15 @@ const AiBox = ({result,content,useModification,reModify}) => {
 const InitializePosterText = ({count,countData,type}) => {
 
   const [stateCount,setStateCount]=useState(countData)
+  useEffect(()=>{
+    setStateCount(countData)
+  },[countData])
 
   return (
     <div>
       <p className="mb-1 mr-1 font-bold text-xs">select text type</p>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button disabled={countData.logo>=1} onClick={({target})=>{if(countData.logo<1){type(target.textContent,[14],false,true),count(target.textContent)}else console.log(countData)}} className='rounded-2xl disabled:opacity-40 text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button disabled={stateCount.logo>=1} onClick={({target})=>{if(stateCount.logo<1){type(target.textContent,[14],false,true),count(target.textContent)}else console.log(setStateCount)}} className='rounded-2xl disabled:opacity-40 text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
       <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
