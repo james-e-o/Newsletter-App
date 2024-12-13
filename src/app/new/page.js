@@ -11,6 +11,8 @@ import Link from "next/link"
 import Image from 'next/image'
 import customImgWhite from '../../../public/custom96w.png'
 import { Input } from "@/components/ui/input"
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger, } from "@/components/ui/collapsible"
 import { Label } from "@/components/ui/label"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -40,7 +42,7 @@ const designs =[
     'Inter', 'Madetommy','Voces', 'Clash'
   ]
   const gradientTypes = [
-    `linear-gradient`, `conic-gradient`,`radial-gradient`
+    `linear-gradient`,`radial-gradient`
   ]
   const bgFormat = {
     gradientType:``,
@@ -53,6 +55,8 @@ const designs =[
     grad3:'black',
     gradDirection:`${gradientTypes[0]}(${arrows[3].css} black,black)`
   }
+
+  const textCount = new Map()
 
 // function FormData(value,{color,fontSize,fontFamily,fontStyle}){
 //   this.value = value
@@ -158,9 +162,13 @@ const NewAd = ({designTrigger, categoryTrigger}) => {
           setPosterStyle(designs[0])
           setBgData(prev => ({...prev,gradientType:gradientTypes[0]}))
         },[])
-        useEffect(()=>{
-         console.log(bgData)
-        },[bgData])
+        // useEffect(()=>{
+        //  console.log(posterCount)
+        //  console.log(textCount)
+        // },[posterCount])
+        // useEffect(()=>{
+        //  console.log(bgData)
+        // },[bgData])
         useEffect(()=>{
          if (posterStyle==designs[4]){
           setBgData(prev => ({...prev,gradientType:gradientTypes[1]}))
@@ -185,7 +193,7 @@ return (
             
               <Card className='mb-3 rounded-sm'>                  
                   <AlertDialogContent className='rounded-md gap-0 max-w-[80vw] p-2'>
-                    <AlertDialogTitle className='h-0 hidden'><AlertDialogDescription></AlertDialogDescription></AlertDialogTitle>
+                    <AlertDialogTitle className='h-0 hidden'><AlertDialogDescription ></AlertDialogDescription></AlertDialogTitle>
                     <p className="p-1 h-fit flex justify-between items-center">
                       <span className='text-xs'>{activeDialog}</span>
                       <AlertDialogCancel className="h-fit right-1 shadow-none border-none p-1 m-0"><XIcon className='w-5 scale-125 h-5' /></AlertDialogCancel>
@@ -193,12 +201,12 @@ return (
                     {
                         activeDialog === 'headline'? <AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setHeading(response)} content={heading}/>: 
                         activeDialog === 'description'?<AiBox result={response} reModify={()=>AiModifyItem(response)} useModification={()=>setDescription(response)} content={description}/> :
-                        activeDialog === 'poster-text'?<InitializePosterText  count={(val)=>{setPosterCount(prev =>({...prev,[val]:posterCount[val]++}))}} type={(valuetype,font,modify,logo)=>{posterText.length<=9?setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}]):''}} countData={posterCount}/> :
+                        activeDialog === 'poster-text'?<InitializePosterText init={(valuetype,font,modify,logo)=>{{ setPosterText(prev => [...prev,{index:prev.length, type:valuetype, modify,logo, value:'',bold:false,italics:false,underline:false,fontSize:font,fontFamily:'',gradient:false,color:['blue','green','yellow']}])}}} count={(val)=>{setPosterCount(prev =>({...prev,[val]:posterCount[val]++}))}} countData={posterCount}/> :
                         activeDialog === 'choose category'?<Drafts /> : ""
                       
                     }
-                    
-                  </AlertDialogContent>
+                    {/* count={(val)=>{setPosterCount(prev =>({...prev,[val]:posterCount[val]++}))}} */}
+                  </AlertDialogContent> 
                 <CardContent className='px-3 py-2'>
                 <label htmlFor="" className='relative ml-[2px] items-center flex justify-between font-semibold text-sm mb-[0.13rem]' ><span>Ad details</span></label>
                   <CardDescription className='text-xs py-1'>
@@ -290,16 +298,15 @@ return (
                                     <BackgroundBox 
                                     //UI
                                     gradient 
-                                    thirdgrad
                                     style={posterStyle}
                                     //DATA
                                     type={(val)=>{setBgData(prev=>({...prev, gradientType:val}))}}
                                     bgImageTrigger={(e)=>{bgImageTrigger(e)}}
                                     colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
-                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
-                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
-                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
-                                    gradientDir={({dir})=>{setBgData(prev => ({...prev,gradDirection:`${bgData.gradientType}(${dir} ${bgData.grad1},${bgData.grad2},${bgData.grad3})`}))}}
+                                    changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[1]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[1]}(${dir} ${bgData.grad1},${bgData.grad2})`})),console.log(dir)}}
+                                    changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[1]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${gradientTypes[1]}(${dir} ${bgData.grad1},${bgData.grad2})`})),console.log(dir)}}
                                     data={bgData}
                                     />  :
 
@@ -326,7 +333,7 @@ return (
                                     colorgradient={(bool)=>{setBgData(prev=> ({...prev,gradient:bool})),console.log(bgData.gradient)}}
                                     changeBg={(col)=>{setBgData(prev=> ({...prev,color:col.hex}))}}
                                     changeGrad1={(col,dir)=>{setBgData(prev=> ({...prev,grad1:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
-                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
+                                    changeGrad2={(col,dir)=>{setBgData(prev=> ({...prev,grad2:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`})),console.log(bgData.gradDirection)}}
                                     changeGrad3={(col,dir)=>{setBgData(prev=> ({...prev,grad3:col.hex})),setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
                                     gradientDir={(dir)=>{setBgData(prev => ({...prev,gradDirection:`${gradientTypes[0]}(${dir} ${bgData.grad1},${bgData.grad2})`}))}}
                                     data={bgData}
@@ -357,11 +364,11 @@ return (
                                     logo={posterText[index].logo}
                                     logoImageTrigger={(e)=>{posterText[index].logo?logoImageTrigger(e):''}}
                                     modify={posterText[index].modify}
-                                    text_terminator={(e)=>{setPosterText(posterText.filter(textObject=>posterText[index].index!==textObject.index)),setPosterCount(prev=>({...prev,[posterText[index].type]:posterCount[posterText[index].type]--}))}}
+                                    text_terminator={(e)=>{setPosterText(posterText.filter(textObject=>posterText[index].index!==textObject.index)),textCount.set(`${[posterText[index].type]}`,posterCount[posterText[index].type]-1),setPosterCount(prev=>({...prev,[posterText[index].type]:(posterText.filter(textObject=>posterText[index].type===textObject.type).length-1)}))}}
                                   />                                      
                                 ))}          
                             </div>
-                      
+                            {/* setPosterCount(prev=>({...prev,[posterText[index].type]:posterCount[posterText[index].type]--})) */}
                             <div className="mt-1">
                               <div className='grid-cols-3 grid gap-1'>
                                 {image && image.map((image_,index)=>( 
@@ -603,10 +610,10 @@ const TextBox = ({changeText,font_Size,text_Bold,text_Italics,text_Underline, te
           <XIcon className='w-4 scale-150 h-4 mr-3' onClick={text_terminator}/>
         </div>
         <Separator/>
-        <div className="flex justify-between px-2 py-1 items-center h-7">
-          <input onChange={(e)=>{changeText(e),setLocalData(prev=>({...prev,value:`${e.target.value}`}))}} className='h-full rounded-none flex-grow border-none outline-none placeholder:italic' placeholder={placeholder} type='text' />
+        <div className="flex justify-between px-1 py-1 items-center h-7">
+          <input onChange={(e)=>{changeText(e),setLocalData(prev=>({...prev,value:`${e.target.value}`}))}} className='h-full rounded-none max-w-[75%] border-none outline-none placeholder:italic' placeholder={placeholder} type='text' />
           {modify && <span className=' rounded-xl border border-alt bg-accent px-2 py-[1px] leading-loose italic text-[10px]'>ai modify</span>}
-          {logo && <div className='flex justify-start items-center gap-2'>
+          {logo && <div className='flex justify-center items-center gap-2'>
           <Button size='sm' className='p-1 h-fit m-1 inline-flex rounded-sm items-center' onClick={logoImageTrigger} variant='secondary'><ImageIcon className='w-4 h-2 '/>image</Button>
         </div>}
           {/* <p className="absolute pl-1 text-[10px] text-red-400 italic">error secttion</p> */}
@@ -655,10 +662,10 @@ const BackgroundBox = ({colorDiv, gradient, colorgradient, bgImg,style,type, bgI
             </p>
             {
               activeDialog === 'background-color'? <div className="p-1"><ColorPicker color={color} hideInput={["rgb", "hsv"]} height={100} onChange={setColor} onChangeComplete={(col)=>{changeBg(col)}}/></div> :             
-              activeDialog === 'background gradient 1'? <div className="p-1"><ColorPicker color={grad1} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad1} onChangeComplete={(col)=>{changeGrad1(col,activedir)}}/></div> :             
-              activeDialog === 'background gradient 2'? <div className="p-1"><ColorPicker color={grad2} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad2} onChangeComplete={(col)=>{changeGrad2(col,activedir)}}/></div> :             
-              activeDialog === 'background gradient 3'? <div className="p-1"><ColorPicker color={grad3} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad3} onChangeComplete={(col)=>{changeGrad3(col,activedir)}}/></div> :  
-              activeDialog === 'gradient settings'? <GradientSettings type={type} style={style} dir={(value)=>{gradientDir(value),setActivedir(value)}} data={data}/> :  ""   
+              activeDialog === 'background gradient 1'? <div className="p-1 flex flex-col gap-2"><ColorPicker color={grad1} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad1} onChangeComplete={(col)=>{changeGrad1(col,activedir)}}/></div> :             
+              activeDialog === 'background gradient 2'? <div className="p-1 flex flex-col gap-2"><ColorPicker color={grad2} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad2} onChangeComplete={(col)=>{changeGrad2(col,activedir)}}/></div> :             
+              activeDialog === 'background gradient 3'? <div className="p-1 flex flex-col gap-2"><ColorPicker color={grad3} hideInput={["rgb", "hsv"]} height={100} onChange={setGrad3} onChangeComplete={(col)=>{changeGrad3(col,activedir)}}/></div> :  
+              activeDialog === 'gradient settings'? <GradientSettings type={type} style={style} dir={(val)=>{gradientDir(val),setActivedir(val)}} data={data}/> :  ""   
             }
             <AlertDialogDescription/>
           </AlertDialogContent>
@@ -741,21 +748,20 @@ const AiBox = ({result,content,useModification,reModify}) => {
   )
 }
 
-const InitializePosterText = ({count,countData,type}) => {
+const InitializePosterText = ({init,count,countData}) => {
 
-  const [stateCount,setStateCount]=useState(countData)
-  useEffect(()=>{
-    setStateCount(countData)
-  },[countData])
-
+  // useEffect(()=>{
+  //   console.log(textCount)
+  //   console.log(countData)
+  // },[countData])
   return (
-    <div>
-      <p className="mb-1 mr-1 font-bold text-xs">select text type</p>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[22],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button disabled={stateCount.logo>=1} onClick={({target})=>{if(stateCount.logo<1){type(target.textContent,[14],false,true),count(target.textContent)}else console.log(setStateCount)}} className='rounded-2xl disabled:opacity-40 text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
-      <AlertDialogCancel asChild><button onClick={({target})=>{type(target.textContent,[14],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
+    <div className='font-Inter'>
+      {/* <p className="mb-1 mr-1 font-bold text-xs">select text type</p> */}
+      <AlertDialogCancel asChild><button onClick={({target})=>{textCount.set(target.textContent,countData[target.textContent]+1) ,init(target.textContent,[22],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>headline</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{if (textCount.get('logo')>=1) {toast("can't have more than 1 logo")}else{textCount.set(target.textContent,countData[target.textContent]+1) ,init(target.textContent,[14],false,true),count(target.textContent)}}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>logo</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{textCount.set(target.textContent,countData[target.textContent]+1) ,init(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>banner</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{textCount.set(target.textContent,countData[target.textContent]+1) ,init(target.textContent,[14],false,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>button</button></AlertDialogCancel>
+      <AlertDialogCancel asChild><button onClick={({target})=>{textCount.set(target.textContent,countData[target.textContent]+1) ,init(target.textContent,[14],true,false),count(target.textContent)}} className='rounded-2xl text-gray-800 text-xs border border-gray-500 bg-transparent px-3 mr-2 mb-2 py-0'>subtext</button></AlertDialogCancel>
     </div>
   )
 }
@@ -771,32 +777,30 @@ const Category = () => {
 const GradientSettings = ({dir,data,style,type}) => {
   
   const [activeArrow, setActiveArrow]=useState(arrows[3])
-  const [y, setY]=useState('50%')
-  const [x, setX]=useState('50%')
-  const [position, setPosition]=useState(`at ${x} ${y}`)
+  const [y, setY]=useState(50)
+  const [x, setX]=useState(50)
+  const [position, setPosition]=useState(`at ${x}% ${y}%`)
   let styleCLassName = "px-3 flex gap-2 py-2 justify-center items-center border rounded-sm mt-3 text-sm font-semibold"
 
   useEffect(()=>{
     setActiveArrow(arrows[3])
   },[])
+  useEffect(()=>{
+    console.log(data.gradDirection)
+  },[data])
   return (
     <div className='flex justify-start font-Inter items-center flex-col'>
       <div style={{background:`${data.gradDirection}`}} className="border-2 rounded-md aspect-video bg-gradient-to-r from-gradient1 to-gradient2 w-5/6"></div>
       <h4 className="mb-1 mt-3 mx-2 text-[0.7rem] font-Inter font-semibold leading-none">gradient styling</h4>
      {style==designs[4] ? <div className=" w-full mt-1 pb-1 flex gap-3 justify-between items-start">
-        <div className="p-1 ">
-          <p className="text-[0.7rem] text-center font-semibold">type</p>
-          <p className={data.gradientType==gradientTypes[2]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[2]),dir(`at ${x} ${y},`)}}><Target className=' p-1'/> Radial</p>
-          <p className={data.gradientType==gradientTypes[1]?`${styleCLassName} border-[slateblue]`:`${styleCLassName} border-gray-400`} onClick={(e)=>{type(gradientTypes[1]),dir(`at ${x} ${y},`)}}><Cone className=' p-1'/> Conic</p>
-        </div>
         <div className="p-1">
-        <p className="text-[0.7rem] text-center  font-semibold pb-1">position</p>
-        <div className="grid grid-cols-2 gap-1 pb-2 mt-3 rotate-45 mr-5 grid-rows-2">
-          <ArrowUpLeftIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
-          <ArrowUpRight className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
-          <ArrowDownLeft className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
-          <ArrowDownRightIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{}}/>
-        </div>
+          <p className="text-[0.7rem] text-center  font-semibold pb-1">position</p>
+          <div className="grid grid-cols-2 gap-1 pb-2 mt-3 rotate-45 mr-5 grid-rows-2">
+            <ArrowUpLeftIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{setX(prev=>prev-2),dir(`at ${x}% ${y}%,`)}}/>
+            <ArrowUpRight className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{setY(prev=>prev-2),dir(`at ${x}% ${y}%,`)}}/>
+            <ArrowDownLeft className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{setY(prev=>prev+2),dir(`at ${x}% ${y}%,`)}}/>
+            <ArrowDownRightIcon className={'overflow-clip p-[2px] border-2 rounded-sm border-gray-300  w-10 h-10'} onClick={(e)=>{setX(prev=>prev+2),dir(`at ${x}% ${y}%,`)}}/>
+          </div>
         </div>
       </div> : 
       
@@ -806,6 +810,8 @@ const GradientSettings = ({dir,data,style,type}) => {
         ))}
       </div>
       }
+
+    <p className="mt-1 ml-1 text-sm">color size</p> <div className='flex ml-1 justify-between'><Slider onValueChange={(e)=>{console.log('temu')}} defaultValue={[14]} min={6} max={24} step={2} className={'w-40'}/><p className="text-sm border py-[3px] px-2">{'7'}</p></div>
     </div>
   )
 }
